@@ -25,7 +25,6 @@
 - 요구사항 API 개발
 
 ## [요구사항 분석](https://docs.google.com/spreadsheets/d/1t_x48OX8v5qGE9aPk9-a_7EixDlwSdpn_QKgB-MDL4c/edit?usp=sharing)
-<img src="docs/00-요구사항분석.png">
 
 ## 시퀀스 다이어그램
 
