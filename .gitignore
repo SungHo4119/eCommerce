@@ -39,5 +39,8 @@ out/
 ### VS Code ###
 .vscode/
 
+## db.diagram
+db.diagram.md
+
 
 
