@@ -1,7 +1,8 @@
 package com.hhplush.eCommerce.api.coupon;
 
-import com.hhplush.eCommerce.common.dto.coupon.request.RequestIssueCouponDTO;
-import com.hhplush.eCommerce.common.dto.coupon.response.ResponseIssueCouponDTO;
+import com.hhplush.eCommerce.api.coupon.dto.request.RequestIssueCouponDTO;
+import com.hhplush.eCommerce.api.coupon.dto.response.ResponseIssueCouponDTO;
+import com.hhplush.eCommerce.business.coupon.CouponService;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/coupons")
 public class CouponController {
 
-    private final ICouponService couponService;
+    private final CouponService couponService;
 
     // TODO: 쿠폰 발급
     @PostMapping("/{couponId}/issued")

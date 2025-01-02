@@ -1,8 +1,9 @@
 package com.hhplush.eCommerce.api.products;
 
-import com.hhplush.eCommerce.common.dto.product.response.ResponseProductListDTO;
-import com.hhplush.eCommerce.common.dto.product.response.ResponseProductTopDTO;
-import com.hhplush.eCommerce.domain.entitiy.ProductState;
+import com.hhplush.eCommerce.api.products.dto.response.ResponseProductListDTO;
+import com.hhplush.eCommerce.api.products.dto.response.ResponseProductTopDTO;
+import com.hhplush.eCommerce.business.product.ProductService;
+import com.hhplush.eCommerce.domain.enums.ProductState;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final IProductService productService;
+    private final ProductService productService;
 
     @GetMapping("/list")
     public ResponseEntity<List<ResponseProductListDTO>> listProducts() {

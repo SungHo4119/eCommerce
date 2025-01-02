@@ -1,10 +1,11 @@
 package com.hhplush.eCommerce.api.user;
 
 
-import com.hhplush.eCommerce.common.dto.user.request.RequestChargeUserPointDTO;
-import com.hhplush.eCommerce.common.dto.user.response.ResponseChargeUserPointDTO;
-import com.hhplush.eCommerce.common.dto.user.response.ResponseGetUserCoupon;
-import com.hhplush.eCommerce.common.dto.user.response.ResponseGetUserDTO;
+import com.hhplush.eCommerce.api.user.dto.request.RequestChargeUserPointDTO;
+import com.hhplush.eCommerce.api.user.dto.response.ResponseChargeUserPointDTO;
+import com.hhplush.eCommerce.api.user.dto.response.ResponseGetUserCoupon;
+import com.hhplush.eCommerce.api.user.dto.response.ResponseGetUserDTO;
+import com.hhplush.eCommerce.business.user.UserService;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final IUserService userService;
+    private final UserService userService;
 
     // TODO: 유저 정보(포인트) 조회
     @GetMapping("/{userId}")

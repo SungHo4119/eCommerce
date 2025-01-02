@@ -1,8 +1,9 @@
 package com.hhplush.eCommerce.api.order;
 
-import com.hhplush.eCommerce.common.dto.order.request.RequestCreateOrderDTO;
-import com.hhplush.eCommerce.common.dto.order.response.ResponseCreateOrderDTO;
-import com.hhplush.eCommerce.domain.entitiy.OrderState;
+import com.hhplush.eCommerce.api.order.dto.request.RequestCreateOrderDTO;
+import com.hhplush.eCommerce.api.order.dto.response.ResponseCreateOrderDTO;
+import com.hhplush.eCommerce.business.order.OrderService;
+import com.hhplush.eCommerce.domain.enums.OrderState;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-    private final IOrderService orderService;
+    private final OrderService orderService;
 
     @PostMapping
     public ResponseEntity<ResponseCreateOrderDTO> createOrder(
