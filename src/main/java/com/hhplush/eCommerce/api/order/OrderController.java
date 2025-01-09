@@ -1,10 +1,22 @@
 package com.hhplush.eCommerce.api.order;
 
+import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.PRODUCT_NOT_FOUND;
+
 import com.hhplush.eCommerce.api.order.dto.request.RequestCreateOrderDTO;
+import com.hhplush.eCommerce.api.order.dto.request.RequestCreateOrderDTO.RequestProducts;
 import com.hhplush.eCommerce.api.order.dto.response.ResponseCreateOrderDTO;
 import com.hhplush.eCommerce.business.order.OrderService;
-import com.hhplush.eCommerce.domain.enums.OrderState;
-import java.time.LocalDateTime;
+import com.hhplush.eCommerce.common.exception.ErrorResponse;
+import com.hhplush.eCommerce.common.exception.custom.ResourceNotFoundException;
+import com.hhplush.eCommerce.domain.order.Order;
+import com.hhplush.eCommerce.domain.order.OrderProduct;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,14 +31,71 @@ public class OrderController {
 
     private final OrderService orderService;
 
+
+    @Operation(summary = "주문 생성")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Order created successfully",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ResponseCreateOrderDTO.class,
+                    example = "{\"orderId\":1,\"userId\":1,\"orderStatus\":\"PENDING\",\"orderAt\":\"2023-10-10T10:00:00\"}"))),
+        @ApiResponse(responseCode = "400", description = "Bad Request",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class),
+                examples = {
+                    @ExampleObject(name = "INVALID_ID", value = "{\"code\":\"400\",\"message\":\"유효하지 않은 ID 양식 입니다.\"}"),
+                    @ExampleObject(name = "INVALID_QUANTITY", value = "{\"code\":\"400\",\"message\":\"유효하지 않은 quantity 양식 입니다.\"}"),
+                })),
+        @ApiResponse(responseCode = "404", description = "Bad Request",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class),
+                examples = {
+                    @ExampleObject(name = "USER_NOT_FOUND", value = "{\"code\":\"404\",\"message\":\"사용자를 찾을 수 없습니다.\"}"),
+                    @ExampleObject(name = "PRODUCT_NOT_FOUND", value = "{\"code\":\"404\",\"message\":\"제품을 찾을 수 없습니다.\"}"),
+                    @ExampleObject(name = "COUPON_NOT_FOUND", value = "{\"code\":\"404\",\"message\":\"쿠폰을 찾을 수 없습니다\"}"),
+                })),
+        @ApiResponse(responseCode = "409", description = "ConflictException",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class),
+                examples = {
+                    @ExampleObject(name = "COUPON_USE_ALREADY_EXISTS", value = "{\"code\":\"409\",\"message\":\"이미 사용한 쿠폰입니다.\"}"),
+                    @ExampleObject(name = "PRODUCT_LIMIT_EXCEEDED", value = "{\"code\":\"409\",\"message\":\"제품 재고가 부족합니다.\"}"),
+                }))
+    })
     @PostMapping
     public ResponseEntity<ResponseCreateOrderDTO> createOrder(
         @RequestBody RequestCreateOrderDTO requestCreateOrderDTO
     ) {
-        return ResponseEntity.ok(
-            ResponseCreateOrderDTO.builder().orderId(1).userId(1).orderStatus(OrderState.PENDING)
-                .orderAt(
-                    LocalDateTime.now()).build()
-        );
+
+        Long userId = requestCreateOrderDTO.userId();
+        Long userCouponId = requestCreateOrderDTO.userCouponId();
+        List<RequestProducts> requestProducts = requestCreateOrderDTO.product();
+
+        // 제품 정보가 없을 경우 or 제품 리스트에 같은 아이디 제품이 중복으로 들어올 경우 체크
+        if (requestProducts.isEmpty()
+            || requestProducts.stream().distinct().count() != requestProducts.size()) {
+            throw new ResourceNotFoundException(PRODUCT_NOT_FOUND);
+        }
+
+        // 주문 상품 생성 ( 주문 상품 리스트 생성 )
+        List<OrderProduct> orderProductList = requestProducts.stream().map(
+            requestProduct ->
+                OrderProduct.builder().productId(requestProduct.productId())
+                    .quantity(requestProduct.quantity()).build()
+        ).toList();
+
+        // 주문 아이디 추출
+        List<Long> productIds = orderProductList.stream()
+            .map(OrderProduct::getProductId)
+            .toList();
+
+        Order order = orderService.createOrder(userId, userCouponId,
+            orderProductList, productIds);
+
+        return ResponseEntity.ok(ResponseCreateOrderDTO.builder()
+            .orderId(order.getOrderId())
+            .userId(order.getUserId())
+            .orderStatus(order.getOrderState())
+            .orderAt(order.getOrderAt())
+            .build());
     }
 }
