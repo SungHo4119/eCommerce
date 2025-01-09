@@ -5,19 +5,19 @@ import lombok.Builder;
 
 @Builder
 public record ResponseGetUserCoupon(
-    Integer userCouponId,
+    Long userCouponId,
     Coupon coupon,
-    Integer userId,
-    Boolean use,
+    Long userId,
+    Boolean couponUse,
     LocalDateTime useAt,
-    LocalDateTime createdAt
+    LocalDateTime createAt
 ) {
 
     @Builder
     public record Coupon(
-        Integer couponId,
+        Long couponId,
         String couponName,
-        Integer discountAmount
+        Long discountAmount
     ) {
 
     }
