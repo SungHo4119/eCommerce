@@ -25,7 +25,7 @@ public class OrderServiceTest extends IntegrationTest {
     @Nested
     @DisplayName("제품 주문")
     @Transactional
-    class GetProducts {
+    class CreateOrder {
 
         @Test
         void 주문_성공() {

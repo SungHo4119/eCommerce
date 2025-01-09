@@ -27,7 +27,7 @@ public class PaymentServiceTest extends IntegrationTest {
     @Nested
     @DisplayName("결재")
     @Transactional
-    class GetProducts {
+    class ProcessPayment {
 
         @Test
         void 결재_성공() {

@@ -51,7 +51,7 @@ public class UserCouponLoader {
     // 사용자 쿠폰 발급
     public UserCoupon issueUserCoupon(Coupon coupon, Long userId) {
         UserCoupon userCoupon = UserCoupon.builder()
-            .coupon(coupon)
+            .couponId(coupon.getCouponId())
             .userId(userId)
             .couponUse(false)
             .useAt(null)
