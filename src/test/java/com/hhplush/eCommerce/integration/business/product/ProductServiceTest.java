@@ -6,16 +6,18 @@ import com.hhplush.eCommerce.domain.product.Product;
 import com.hhplush.eCommerce.domain.product.ProductState;
 import com.hhplush.eCommerce.domain.product.ProductTop;
 import com.hhplush.eCommerce.integration.config.IntegrationTest;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ProductServiceTest extends IntegrationTest {
 
     @Nested
     @DisplayName("상품 목록 조회")
+    @Transactional
     class GetProducts {
 
         @Test
@@ -25,6 +27,7 @@ public class ProductServiceTest extends IntegrationTest {
                 .productName("Test Product")
                 .price(1000L)
                 .build();
+            product = productJPARepository.save(product);
             // when
             List<Product> result = productService.getProducts();
 
@@ -38,6 +41,7 @@ public class ProductServiceTest extends IntegrationTest {
 
     @Nested
     @DisplayName("상위 상품 목록 조회")
+    @Transactional
     class GetTopProducts {
 
         @Test
@@ -50,7 +54,7 @@ public class ProductServiceTest extends IntegrationTest {
                 .productRank(1L)
                 .productState(ProductState.IN_STOCK)
                 .totalQuantity(100L)
-                .createAt(LocalDateTime.now())
+                .createAt(LocalDate.now())
                 .build();
 
             product = productTopJPARepository.save(product);

@@ -14,12 +14,14 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 
 public class UserServiceTest extends IntegrationTest {
 
     @Nested
     @DisplayName("유저 조회")
+    @Transactional
     class GetUser {
 
         @Test
@@ -51,6 +53,7 @@ public class UserServiceTest extends IntegrationTest {
 
     @Nested
     @DisplayName("유저 포인트 충전")
+    @Transactional
     class IncreaseUserPointTest {
 
         @Test
@@ -83,6 +86,7 @@ public class UserServiceTest extends IntegrationTest {
 
     @Nested
     @DisplayName("유저 쿠폰 조회")
+    @Transactional
     class GetUserCoupon {
 
         @Test

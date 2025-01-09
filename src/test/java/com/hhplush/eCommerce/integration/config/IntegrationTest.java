@@ -28,10 +28,13 @@ import com.hhplush.eCommerce.infrastructure.product.ProductRepository;
 import com.hhplush.eCommerce.infrastructure.user.IUserJPARepository;
 import com.hhplush.eCommerce.infrastructure.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+@Execution(ExecutionMode.SAME_THREAD)
 @SpringBootTest
 @ActiveProfiles("test")
 public class IntegrationTest {

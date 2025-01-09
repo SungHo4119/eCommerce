@@ -18,11 +18,13 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 public class OrderServiceTest extends IntegrationTest {
 
     @Nested
     @DisplayName("제품 주문")
+    @Transactional
     class GetProducts {
 
         @Test
@@ -60,6 +62,7 @@ public class OrderServiceTest extends IntegrationTest {
                 .productId(product.getProductId())
                 .quantity(2L)
                 .build();
+            productQuantity = productQuantityJPARepository.save(productQuantity);
 
             List<OrderProduct> orderProduct = List.of(
                 OrderProduct.builder().productId(product.getProductId()).quantity(2L).build()
@@ -76,6 +79,17 @@ public class OrderServiceTest extends IntegrationTest {
             assertEquals(order.getDiscountAmount(), 900L);
             assertEquals(order.getPaymentAmount(), 100);
             assertEquals(order.getOrderState(), OrderState.PENDING);
+
+            // 재고 차감 확인
+            productQuantity = productQuantityJPARepository.findById(
+                productQuantity.getProductQuantityId()).get();
+            assertEquals(productQuantity.getQuantity(), 0L);
+
+            // 주문 상품 확인
+            List<OrderProduct> orderProducts = orderProductJPARepository.findByOrderId(
+                order.getOrderId());
+            assertThat(orderProducts).isNotEmpty();
+            assertThat(orderProducts).hasSize(1);
         }
     }
 }

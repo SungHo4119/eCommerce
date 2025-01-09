@@ -11,11 +11,13 @@ import com.hhplush.eCommerce.integration.config.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 public class CouponServiceTest extends IntegrationTest {
 
     @Nested
     @DisplayName("쿠폰 발급")
+    @Transactional
     class GetProducts {
 
         @Test
