@@ -3,6 +3,8 @@ package com.hhplush.eCommerce.domain.coupon;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -16,15 +18,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "user_coupon")
 @Setter
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "user_coupon")
 public class UserCoupon {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_coupon_id")
     Long userCouponId;
     @Column(name = "user_id")
@@ -44,5 +47,5 @@ public class UserCoupon {
     LocalDateTime useAt;
     @Column(name = "create_at")
     LocalDateTime createAt;
-    
+
 }
