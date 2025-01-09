@@ -6,12 +6,12 @@ import org.springframework.lang.Nullable;
 
 @Builder
 public record ResponseIssueCouponDTO(
-    Integer userCouponId,
-    Integer couponId,
-    Integer userId,
-    Boolean use,
+    Long userCouponId,
+    Long couponId,
+    Long userId,
+    Boolean couponUse,
     @Nullable LocalDateTime useAt,
-    LocalDateTime createdAt
+    LocalDateTime createAt
 ) {
 
 }
