@@ -1,4 +1,4 @@
-package com.hhplush.eCommerce.domain.coupon;
+package com.hhplush.eCommerce.domain.order;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,25 +9,24 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Setter
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "coupons")
-public class Coupon {
+@Table(name = "order_product")
+public class OrderProduct {
 
     @Id
-    @Column(name = "coupon_id")
-    Long couponId;
-
-    @Column(name = "coupon_name")
-    String couponName;
-
-    @Column(name = "discount_amount")
-    Long discountAmount;
-
-    @Column(name = "coupon_state")
-    CouponState couponState;
+    @Column(name = "order_product_id")
+    Long orderProductId;
+    @Column(name = "order_id")
+    Long orderId;
+    @Column(name = "product_id")
+    Long productId;
+    @Column(name = "quantity")
+    Long quantity;
 }

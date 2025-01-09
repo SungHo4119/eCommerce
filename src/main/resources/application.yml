@@ -12,6 +12,7 @@ spring:
       max-lifetime: 60000
     driver-class-name: com.mysql.cj.jdbc.Driver
     jpa:
+      database: mysql
       open-in-view: false
       generate-ddl: false
       show-sql: false
@@ -20,7 +21,13 @@ spring:
       properties:
         hibernate.timezone.default_storage: NORMALIZE_UTC
         hibernate.jdbc.time_zone: UTC
-
+logging:
+  level:
+    root: INFO  # 전체 로그 레벨
+    org.springframework.web: INFO
+    org.hibernate: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"  # 로그 출력 포맷 (선택 사항)
 ---
 spring.config.activate.on-profile: local, test
 

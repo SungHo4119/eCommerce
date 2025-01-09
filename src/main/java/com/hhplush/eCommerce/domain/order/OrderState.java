@@ -1,4 +1,4 @@
-package com.hhplush.eCommerce.domain.enums;
+package com.hhplush.eCommerce.domain.order;
 
 public enum OrderState {
     PENDING,
