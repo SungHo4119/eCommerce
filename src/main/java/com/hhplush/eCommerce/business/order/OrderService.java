@@ -51,7 +51,7 @@ public class OrderService {
         }
 
         // 쿠폰 정보 조회 ( 할인 금액  확인 )
-        Coupon coupon = couponLoader.getCouponByCouponId(userCoupon.getCouponId());
+        Coupon coupon = couponLoader.getCouponByCouponId(userCoupon.getCoupon().getCouponId());
 
         // 제품 조회
         List<Product> productList = productLoader.checkGetProductList(

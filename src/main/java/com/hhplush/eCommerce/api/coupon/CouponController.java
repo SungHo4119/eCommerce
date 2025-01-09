@@ -66,7 +66,7 @@ public class CouponController {
             requestIssueCouponDTO.userId());
         return ResponseEntity.ok(ResponseIssueCouponDTO.builder()
             .userCouponId(userCoupon.getUserCouponId())
-            .couponId(userCoupon.getCouponId())
+            .couponId(userCoupon.getCoupon().getCouponId())
             .userId(userCoupon.getUserId())
             .couponUse(userCoupon.getCouponUse())
             .useAt(userCoupon.getUseAt())
