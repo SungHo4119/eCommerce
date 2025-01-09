@@ -3,8 +3,13 @@ package com.hhplush.eCommerce.api.products;
 import com.hhplush.eCommerce.api.products.dto.response.ResponseProductListDTO;
 import com.hhplush.eCommerce.api.products.dto.response.ResponseProductTopDTO;
 import com.hhplush.eCommerce.business.product.ProductService;
-import com.hhplush.eCommerce.domain.enums.ProductState;
-import java.time.LocalDateTime;
+import com.hhplush.eCommerce.domain.product.Product;
+import com.hhplush.eCommerce.domain.product.ProductTop;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,37 +24,48 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/list")
+
+    @Operation(summary = "상품 목록 조회")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ResponseProductListDTO.class,
+                    example =
+                        "[{\"productId\":1,\"productName\":\"상품1\",\"price\":1000,\"productState\":\"IN_STOCK\"}"
+                            + ",{\"productId\":2,\"productName\":\"상품2\",\"price\":2000,\"productState\":\"OUT_OF_STOCK\"}]"))),
+    })
+    @GetMapping()
     public ResponseEntity<List<ResponseProductListDTO>> listProducts() {
+        List<Product> products = productService.getProducts();
         return ResponseEntity.ok(
-            List.of(
-                ResponseProductListDTO.builder().productId(1).productName("product1").price(1000)
-                    .productState(
-                        ProductState.IN_STOCK)
-                    .build(),
-                ResponseProductListDTO.builder().productId(2).productName("product2").price(2000)
-                    .productState(
-                        ProductState.IN_STOCK)
-                    .build(),
-                ResponseProductListDTO.builder().productId(3).productName("product3").price(3000)
-                    .productState(
-                        ProductState.OUT_OF_STOCK)
+            products.stream().map(
+                product -> ResponseProductListDTO.builder()
+                    .productId(product.getProductId())
+                    .productName(product.getProductName())
+                    .price(product.getPrice())
+                    .productState(product.getProductState())
                     .build()
-            )
+            ).toList()
         );
     }
 
     @GetMapping("/top")
-    public ResponseEntity<List<ResponseProductTopDTO>> topProducts() {
+    public ResponseEntity<List<ResponseProductTopDTO>> topProducts(
+    ) {
+        List<ProductTop> products = productService.getTopProducts();
+
         return ResponseEntity.ok(
-            List.of(
-                new ResponseProductTopDTO(1, 1, "product1", 1000, ProductState.IN_STOCK, 1,
-                    LocalDateTime.now()),
-                new ResponseProductTopDTO(2, 2, "product2", 2000, ProductState.IN_STOCK, 2,
-                    LocalDateTime.now()),
-                new ResponseProductTopDTO(3, 3, "product3", 3000, ProductState.OUT_OF_STOCK, 3,
-                    LocalDateTime.now())
-            )
+            products.stream().map(
+                product -> ResponseProductTopDTO.builder()
+                    .productTopId(product.getProductTopId())
+                    .productId(product.getProductId())
+                    .productName(product.getProductName())
+                    .price(product.getPrice())
+                    .productState(product.getProductState())
+                    .product_rank(product.getProductRank())
+                    .createAt(product.getCreateAt())
+                    .build()
+            ).toList()
         );
     }
 }
