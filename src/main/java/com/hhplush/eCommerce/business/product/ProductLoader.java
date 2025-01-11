@@ -34,7 +34,12 @@ public class ProductLoader {
 
     // 제품 수량 확인
     public List<ProductQuantity> getProductQuantityListWithLock(List<Long> productIds) {
-        return productRepository.productQuantityFindByIdsWithLock(productIds);
+        List<ProductQuantity> productQuantities = productRepository.productQuantityFindByIdsWithLock(
+            productIds);
+        if (productQuantities.size() != productIds.size()) {
+            throw new ResourceNotFoundException(PRODUCT_NOT_FOUND);
+        }
+        return productQuantities;
     }
 
     // 재고 확인 및 검증

@@ -8,7 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,12 +17,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "product_top")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "product_top")
 public class ProductTop {
 
     @Id
@@ -50,5 +50,5 @@ public class ProductTop {
     private Long productRank;
 
     @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt;
+    private LocalDate createAt;
 }

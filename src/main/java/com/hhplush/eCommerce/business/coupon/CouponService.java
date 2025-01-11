@@ -25,12 +25,12 @@ public class CouponService {
         // 쿠폰 정보 조회
         Coupon coupon = couponLoader.getCouponByCouponId(couponId);
 
-        // 이미 발급 받은 쿠폰인지 체크
-        userCouponLoader.checkCouponValidity(userId, couponId);
-
         // 발급 하기 위한 수량 체크
         CouponQuantity couponQuantity = couponLoader.checkCouponQuantity(couponId);
 
+        // 이미 발급 받은 쿠폰인지 체크
+        userCouponLoader.checkCouponValidity(userId, couponId);
+        
         // 쿠폰 발급
         UserCoupon userCoupon = userCouponLoader.issueUserCoupon(coupon, userId);
 

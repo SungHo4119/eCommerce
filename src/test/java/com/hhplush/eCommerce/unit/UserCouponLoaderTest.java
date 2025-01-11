@@ -139,7 +139,7 @@ public class UserCouponLoaderTest {
             Long userId = 1L;
             Coupon coupon = Coupon.builder().couponId(1L).build();
             UserCoupon userCoupon = UserCoupon.builder()
-                .coupon(coupon)
+                .couponId(coupon.getCouponId())
                 .userId(userId)
                 .build();
 
