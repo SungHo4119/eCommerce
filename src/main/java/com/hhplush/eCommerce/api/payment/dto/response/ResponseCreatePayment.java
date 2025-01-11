@@ -5,10 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record ResponseCreatePayment(
-    Integer paymentId,
-    Integer orderId,
-    Integer userCouponId,
-    Integer amount,
+    Long paymentId,
+    Long orderId,
     LocalDateTime paymentAt
 ) {
 

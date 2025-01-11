@@ -4,7 +4,7 @@ package com.hhplush.eCommerce;
 import com.hhplush.eCommerce.common.exception.ErrorResponse;
 import com.hhplush.eCommerce.common.exception.custom.AlreadyExistsException;
 import com.hhplush.eCommerce.common.exception.custom.BadRequestException;
-import com.hhplush.eCommerce.common.exception.custom.ConflictException;
+import com.hhplush.eCommerce.common.exception.custom.InvalidPaymentCancellationException;
 import com.hhplush.eCommerce.common.exception.custom.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +37,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             .body(new ErrorResponse(String.valueOf(HttpStatus.CONFLICT), e.getMessage()));
     }
 
-    @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ErrorResponse> handleConflictException(ConflictException e) {
+    @ExceptionHandler(InvalidPaymentCancellationException.class)
+    public ResponseEntity<ErrorResponse> handleConflictException(
+        InvalidPaymentCancellationException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(new ErrorResponse(String.valueOf(HttpStatus.CONFLICT), e.getMessage()));
     }

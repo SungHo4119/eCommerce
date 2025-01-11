@@ -4,9 +4,9 @@ import lombok.Builder;
 
 @Builder
 public record ResponseChargeUserPointDTO(
-    Integer userId,
+    Long userId,
     String userName,
-    Integer point
+    Long point
 ) {
 
 }

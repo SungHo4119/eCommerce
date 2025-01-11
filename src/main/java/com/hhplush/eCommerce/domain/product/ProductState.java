@@ -1,4 +1,4 @@
-package com.hhplush.eCommerce.domain.enums;
+package com.hhplush.eCommerce.domain.product;
 
 public enum ProductState {
     IN_STOCK,

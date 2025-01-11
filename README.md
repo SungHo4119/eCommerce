@@ -1,8 +1,9 @@
 # 프로젝트 선정
-`e-commerce` 를 선정 하였습니다. 
+
+`e-commerce` 를 선정 하였습니다.
 
 ## Milestone
- 
+
 - 진행 가능 한 날 : 월,화,수,목,일 ( 주 5일 )
 - 1MD : 1일 ( 3시간 )
 
@@ -109,8 +110,9 @@
 ### business
 
 - 비즈니스 로직 레이어
-- Service와 Repository 인터페이스를 구성
-- Service에서 Repository 인터페이스를 의존하고 Repository 구현은 어떻게 되는지 관심사가 아님
+- Service, Loader, Repository 인터페이스를 구성
+- Service에서 Loader 의존하고 Loader에서 생성되어 있는 기능을 가져다 사용함
+- Loader에서 Repository 인터페이스를 의존하고 Repository 구현은 어떻게 되는지 관심사가 아님
 - 관심사 : Repository에게 데이터를 요청하여 응답받고 비즈니스 로직 ( 코드로 이루워진 CodeBase 핵심 로직 )을 구현
 
 ### infrastructure
@@ -130,4 +132,6 @@
 - 공통 레이어
 - 공통적으로 사용되는 Exception, Message, Util 등을 정의
 
-## 서버 Configuration
+## 스웨거
+
+![05-API-명세서(Swagger).png](docs/05-API-%EB%AA%85%EC%84%B8%EC%84%9C%28Swagger%29.png)

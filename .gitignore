@@ -42,5 +42,4 @@ out/
 ## db.diagram
 db.diagram.md
 
-
-
+data/*

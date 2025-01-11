@@ -1,16 +1,18 @@
 package com.hhplush.eCommerce.api.products.dto.response;
 
-import com.hhplush.eCommerce.domain.enums.ProductState;
-import java.time.LocalDateTime;
+import com.hhplush.eCommerce.domain.product.ProductState;
+import java.time.LocalDate;
+import lombok.Builder;
 
+@Builder
 public record ResponseProductTopDTO(
-    Integer productTopId,
-    Integer productId,
+    Long productTopId,
+    Long productId,
     String productName,
-    Integer price,
+    Long price,
     ProductState productState,
-    Integer rank,
-    LocalDateTime createdAt
+    Long product_rank,
+    LocalDate createAt
 
 ) {
 
