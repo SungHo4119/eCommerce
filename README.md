@@ -134,4 +134,5 @@
 
 ## 스웨거
 
-![05-API-명세서(Swagger).png](docs/05-API-%EB%AA%85%EC%84%B8%EC%84%9C%28Swagger%29.png)
+- http://localhost:8080/swagger-ui/index.html
+  ![05-API-명세서(Swagger).png](docs/05-API-%EB%AA%85%EC%84%B8%EC%84%9C%28Swagger%29.png)

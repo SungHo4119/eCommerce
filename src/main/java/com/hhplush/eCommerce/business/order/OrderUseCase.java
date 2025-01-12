@@ -40,7 +40,7 @@ public class OrderUseCase {
 
         Coupon coupon = couponService.getCouponByCouponId(userCoupon.getCoupon().getCouponId());
         // 제품 리스트 조회
-        List<Product> productList = productService.checkGetProductList(productIds);
+        List<Product> productList = productService.getProductListByProductIds(productIds);
 
         // 주문 상품 체크
         orderSerivce.checkOrderProductList(orderProductList, productList);

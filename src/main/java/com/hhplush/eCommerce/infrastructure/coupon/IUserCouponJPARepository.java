@@ -9,14 +9,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface IUserCouponJPARepository extends JpaRepository<UserCoupon, Long> {
 
-    Optional<UserCoupon> findByUserIdAndCouponId(Long userId, Long couponId);
+    @Query("SELECT uc FROM UserCoupon uc WHERE uc.userId = :userId AND uc.coupon.couponId = :couponId")
+    Optional<UserCoupon> findByUserIdAndCouponId(@Param("userId") Long userId,
+        @Param("couponId") Long couponId);
 
-    @Query(
-        " select "
-            + "new com.hhplush.eCommerce.domain.coupon.UserCouponInfo(uc.userCouponId, c, uc.userId, uc.couponUse, uc.useAt, uc.createAt) "
-            + " from UserCoupon uc "
-            + " join uc.coupon c "
-            + " where uc.userId = :userId "
-    )
-    List<UserCoupon> findCouponsByUserId(@Param("userId") Long userId);
+
+    List<UserCoupon> findCouponsByUserId(Long userId);
 }

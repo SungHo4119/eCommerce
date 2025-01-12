@@ -20,8 +20,8 @@ public class ProductService {
         return productRepository.productFindAll();
     }
 
-    // 제품 목록 확인
-    public List<Product> checkGetProductList(List<Long> productIds) {
+    // 제품 목록 조회(제품 ID)
+    public List<Product> getProductListByProductIds(List<Long> productIds) {
         return productRepository.productFindByIds(productIds);
     }
 
@@ -50,6 +50,7 @@ public class ProductService {
 
     }
 
+    // 재고 복구
     public void cancelProductQuantity(List<ProductQuantity> productQuantities,
         List<OrderProduct> orderProductList) {
         for (ProductQuantity productQuantity : productQuantities) {

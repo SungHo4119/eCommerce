@@ -37,7 +37,6 @@ public class UserCoupon {
     @Column(name = "user_id", nullable = false)
     Long userId;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id", referencedColumnName = "coupon_id", insertable = false, updatable = false)
     Coupon coupon;
@@ -48,7 +47,6 @@ public class UserCoupon {
     LocalDateTime useAt;
     @Column(name = "create_at")
     LocalDateTime createAt;
-
 
     // 쿠폰 발급시 사용자에게 쿠폰을 발급한다.
     public UserCoupon(Coupon coupon, Long userId) {
