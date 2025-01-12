@@ -3,7 +3,7 @@ package com.hhplush.eCommerce.api.payment;
 import com.hhplush.eCommerce.api.order.dto.response.ResponseCreateOrderDTO;
 import com.hhplush.eCommerce.api.payment.dto.request.RequestCreatePaymentDTO;
 import com.hhplush.eCommerce.api.payment.dto.response.ResponseCreatePayment;
-import com.hhplush.eCommerce.business.payment.PaymentService;
+import com.hhplush.eCommerce.business.payment.PaymentUseCase;
 import com.hhplush.eCommerce.common.exception.ErrorResponse;
 import com.hhplush.eCommerce.domain.payment.Payment;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/payments")
 public class PaymentController {
 
-    private final PaymentService paymentService;
+    private final PaymentUseCase paymentUseCase;
 
     @Operation(summary = "결재")
     @ApiResponses(value = {
@@ -57,7 +57,7 @@ public class PaymentController {
     public ResponseEntity<ResponseCreatePayment> createPayment(
         @RequestBody RequestCreatePaymentDTO requestCreatePaymentDTO
     ) {
-        Payment payment = paymentService.processPayment(requestCreatePaymentDTO.orderId());
+        Payment payment = paymentUseCase.processPayment(requestCreatePaymentDTO.orderId());
         return ResponseEntity.ok(
             ResponseCreatePayment.builder()
                 .paymentId(payment.getPaymentId())

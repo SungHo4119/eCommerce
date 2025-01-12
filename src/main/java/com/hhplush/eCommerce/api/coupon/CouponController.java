@@ -4,7 +4,7 @@ import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.IN
 
 import com.hhplush.eCommerce.api.coupon.dto.request.RequestIssueCouponDTO;
 import com.hhplush.eCommerce.api.coupon.dto.response.ResponseIssueCouponDTO;
-import com.hhplush.eCommerce.business.coupon.CouponService;
+import com.hhplush.eCommerce.business.coupon.CouponUseCase;
 import com.hhplush.eCommerce.common.exception.ErrorResponse;
 import com.hhplush.eCommerce.domain.coupon.UserCoupon;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/coupons")
 public class CouponController {
 
-    private final CouponService couponService;
+    private final CouponUseCase couponUseCase;
 
     @Operation(summary = "쿠폰 발급")
     @ApiResponses(value = {
@@ -62,7 +62,7 @@ public class CouponController {
         @Schema(description = "쿠폰 ID", example = "1") Long couponId,
         @RequestBody RequestIssueCouponDTO requestIssueCouponDTO
     ) {
-        UserCoupon userCoupon = couponService.issueCoupon(couponId,
+        UserCoupon userCoupon = couponUseCase.issueCoupon(couponId,
             requestIssueCouponDTO.userId());
         return ResponseEntity.ok(ResponseIssueCouponDTO.builder()
             .userCouponId(userCoupon.getUserCouponId())

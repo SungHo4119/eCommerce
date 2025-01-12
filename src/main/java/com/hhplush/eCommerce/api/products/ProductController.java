@@ -2,7 +2,7 @@ package com.hhplush.eCommerce.api.products;
 
 import com.hhplush.eCommerce.api.products.dto.response.ResponseProductListDTO;
 import com.hhplush.eCommerce.api.products.dto.response.ResponseProductTopDTO;
-import com.hhplush.eCommerce.business.product.ProductService;
+import com.hhplush.eCommerce.business.product.ProductUseCase;
 import com.hhplush.eCommerce.domain.product.Product;
 import com.hhplush.eCommerce.domain.product.ProductTop;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductUseCase productUseCase;
 
 
     @Operation(summary = "상품 목록 조회")
@@ -36,7 +36,7 @@ public class ProductController {
     })
     @GetMapping()
     public ResponseEntity<List<ResponseProductListDTO>> listProducts() {
-        List<Product> products = productService.getProducts();
+        List<Product> products = productUseCase.getProducts();
         return ResponseEntity.ok(
             products.stream().map(
                 product -> ResponseProductListDTO.builder()
@@ -49,10 +49,11 @@ public class ProductController {
         );
     }
 
+    @Operation(summary = "상위 상품 목록 조회")
     @GetMapping("/top")
     public ResponseEntity<List<ResponseProductTopDTO>> topProducts(
     ) {
-        List<ProductTop> products = productService.getTopProducts();
+        List<ProductTop> products = productUseCase.getTopProducts();
 
         return ResponseEntity.ok(
             products.stream().map(

@@ -7,9 +7,9 @@ import com.hhplush.eCommerce.api.user.dto.request.RequestChargeUserPointDTO;
 import com.hhplush.eCommerce.api.user.dto.response.ResponseChargeUserPointDTO;
 import com.hhplush.eCommerce.api.user.dto.response.ResponseGetUserCoupon;
 import com.hhplush.eCommerce.api.user.dto.response.ResponseGetUserDTO;
-import com.hhplush.eCommerce.business.user.UserService;
+import com.hhplush.eCommerce.business.user.UserUseCase;
 import com.hhplush.eCommerce.common.exception.ErrorResponse;
-import com.hhplush.eCommerce.domain.coupon.UserCouponInfo;
+import com.hhplush.eCommerce.domain.coupon.UserCoupon;
 import com.hhplush.eCommerce.domain.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserService userService;
+    private final UserUseCase userService;
 
     @Operation(summary = "유저 조회")
     @ApiResponses(value = {
@@ -110,7 +110,7 @@ public class UserController {
     public ResponseEntity<List<ResponseGetUserCoupon>> getUserCoupon(
         @PathVariable("userId") @Min(value = 1, message = INVALID_ID) Long userId
     ) {
-        List<UserCouponInfo> userCoupon = userService.getUserCoupon(userId);
+        List<UserCoupon> userCoupon = userService.getUserCoupon(userId);
 
         return ResponseEntity.ok(userCoupon.stream()
             .map(coupon -> ResponseGetUserCoupon.builder()

@@ -1,4 +1,4 @@
-package com.hhplush.eCommerce.unit;
+package com.hhplush.eCommerce.unit.user;
 
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.INSUFFICIENT_BALANCE;
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.USER_NOT_FOUND;
@@ -20,7 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class UserLoaderTest {
+public class UserServiceTest {
 
     @Mock
     private IUserRepository userRepository;
@@ -33,13 +33,13 @@ public class UserLoaderTest {
         MockitoAnnotations.openMocks(this);
     }
 
-
     @Nested
-    @DisplayName("UserLoader 의 getUserByUserId 메서드 테스트")
+    @DisplayName("UserService 의 getUserByUserId 메서드 테스트")
     class GetUserTests {
 
         @Test
-        void getUserByUserId_성공() {
+        @DisplayName("유저 정보가 있다면 유저객체을 반환한다")
+        void getUserByUserId_success() {
             // Given
             Long userId = 1L;
             User user = User.builder()
@@ -56,6 +56,7 @@ public class UserLoaderTest {
         }
 
         @Test
+        @DisplayName("유저 정보가 없다면 ResourceNotFoundException 예외를 발생한다")
         void UserNotFound_ResourceNotFoundException() {
             // Given
             Long userId = 1L;
@@ -65,52 +66,78 @@ public class UserLoaderTest {
             ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> userService.getUserByUserId(userId));
 
-            assertEquals(USER_NOT_FOUND, exception.getMessage());
+            // Then
+            assertEquals(exception.getMessage(), USER_NOT_FOUND);
         }
     }
 
+
     @Nested
-    @DisplayName("UserLoader 의 decreaseUserPoint 메서드 테스트")
+    @DisplayName("UserService 의 chargePoint 메서드 테스트")
+    class ChargePointTests {
+
+        @Test
+        @DisplayName("포인트 충전에 성공하면 유저 객체에 포인트를 추가 한다.")
+        void chargePoint_success() {
+            // Given
+            Long userId = 1L;
+            Long userPoint = 100L;
+            Long addPoint = 100L;
+            User user = User.builder()
+                .userId(userId)
+                .point(userPoint)
+                .build();
+
+            when(userRepository.save(user)).thenReturn(user);
+            // When
+            User result = userService.chargePoint(user, addPoint);
+            // Then
+            assertEquals(user.getPoint(), userPoint + addPoint);
+
+        }
+    }
+
+
+    @Nested
+    @DisplayName("UserService 의 decreaseUserPoint 메서드 테스트")
     class DecreaseUserPointTests {
 
         @Test
-        void decreaseUserPoint_성공() {
+        @DisplayName("포인트 차감액 보다 유저 포인트가 많다면 유저 포인트를 차감한다")
+        void getUserByUserId_success() {
             // Given
             Long userId = 1L;
-
             Long userPoint = 100L;
-            Long decreasePoint = 100L;
             User user = User.builder()
                 .userId(userId)
-                .userName("Test User")
                 .point(userPoint)
                 .build();
-            when(userRepository.save(user)).thenReturn(user);
             // When
-            userService.decreaseUserPoint(user, decreasePoint);
+            userService.decreaseUserPoint(user, userPoint);
             // Then
-            assertEquals(user.getPoint(), userPoint - decreasePoint);
+            assertEquals(user.getPoint(), 0);
+
         }
 
         @Test
-        void INSUFFICIENT_BALANCE_InvalidPaymentCancellationException() {
+        @DisplayName("포인트 차감액 보다 유저 포인트가 적다면 InvalidPaymentCancellationException 예외를 발생한다")
+        void UserNotFound_ResourceNotFoundException() {
             // Given
             Long userId = 1L;
-
             Long userPoint = 100L;
             Long decreasePoint = 200L;
             User user = User.builder()
                 .userId(userId)
-                .userName("Test User")
                 .point(userPoint)
                 .build();
-            when(userRepository.save(user)).thenReturn(user);
-            // When // Then
+
+            // When & Then
             InvalidPaymentCancellationException exception = assertThrows(
                 InvalidPaymentCancellationException.class,
                 () -> userService.decreaseUserPoint(user, decreasePoint));
 
-            assertEquals(INSUFFICIENT_BALANCE, exception.getMessage());
+            // Then
+            assertEquals(exception.getMessage(), INSUFFICIENT_BALANCE);
         }
     }
 }

@@ -1,17 +1,17 @@
 package com.hhplush.eCommerce.integration.config;
 
 
-import com.hhplush.eCommerce.business.coupon.CouponLoader;
-import com.hhplush.eCommerce.business.coupon.CouponService;
-import com.hhplush.eCommerce.business.coupon.UserCouponLoader;
-import com.hhplush.eCommerce.business.order.OrderLoader;
-import com.hhplush.eCommerce.business.order.OrderService;
-import com.hhplush.eCommerce.business.payment.PaymentLoader;
-import com.hhplush.eCommerce.business.payment.PaymentService;
-import com.hhplush.eCommerce.business.product.ProductLoader;
-import com.hhplush.eCommerce.business.product.ProductService;
-import com.hhplush.eCommerce.business.user.UserLoader;
-import com.hhplush.eCommerce.business.user.UserService;
+import com.hhplush.eCommerce.business.coupon.CouponUseCase;
+import com.hhplush.eCommerce.business.order.OrderUseCase;
+import com.hhplush.eCommerce.business.payment.PaymentUseCase;
+import com.hhplush.eCommerce.business.product.ProductUseCase;
+import com.hhplush.eCommerce.business.user.UserUseCase;
+import com.hhplush.eCommerce.domain.coupon.CouponService;
+import com.hhplush.eCommerce.domain.coupon.UserCouponService;
+import com.hhplush.eCommerce.domain.order.OrderSerivce;
+import com.hhplush.eCommerce.domain.payment.PaymentService;
+import com.hhplush.eCommerce.domain.product.ProductService;
+import com.hhplush.eCommerce.domain.user.UserService;
 import com.hhplush.eCommerce.infrastructure.coupon.CouponRepository;
 import com.hhplush.eCommerce.infrastructure.coupon.ICouponJPARepository;
 import com.hhplush.eCommerce.infrastructure.coupon.ICouponQuantityJPARepository;
@@ -45,9 +45,9 @@ public class IntegrationTest {
     @Autowired
     protected UserRepository userRepository;
     @Autowired
-    protected UserService userService;
+    protected UserUseCase userService;
     @Autowired
-    protected UserLoader userLoader;
+    protected UserService userService;
 
     // 제품
     @Autowired
@@ -59,9 +59,9 @@ public class IntegrationTest {
     @Autowired
     protected IProductTopJPARepository productTopJPARepository;
     @Autowired
-    protected ProductService productService;
+    protected ProductUseCase productUseCase;
     @Autowired
-    protected ProductLoader productLoader;
+    protected ProductService productService;
     // 쿠폰
     @Autowired
     protected CouponRepository couponRepository;
@@ -72,11 +72,11 @@ public class IntegrationTest {
     @Autowired
     protected IUserCouponJPARepository userCouponJPARepository;
     @Autowired
+    protected CouponUseCase couponUseCase;
+    @Autowired
     protected CouponService couponService;
     @Autowired
-    protected CouponLoader couponLoader;
-    @Autowired
-    protected UserCouponLoader userCouponLoader;
+    protected UserCouponService userCouponService;
     // 주문
     @Autowired
     protected OrderRepository orderRepository;
@@ -85,18 +85,18 @@ public class IntegrationTest {
     @Autowired
     protected IOrderProductJPARepository orderProductJPARepository;
     @Autowired
-    protected OrderLoader orderLoader;
+    protected OrderSerivce orderSerivce;
     @Autowired
-    protected OrderService orderService;
+    protected OrderUseCase orderUseCase;
     // 결재
     @Autowired
     protected PaymentRepository paymentRepository;
     @Autowired
     protected IPaymentJPARepository paymentJPARepository;
     @Autowired
-    protected PaymentService paymentService;
+    protected PaymentUseCase paymentUseCase;
     @Autowired
-    protected PaymentLoader paymentLoader;
+    protected PaymentService paymentService;
 
     @BeforeEach
     void setUp() {

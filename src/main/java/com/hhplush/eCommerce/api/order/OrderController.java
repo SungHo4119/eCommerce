@@ -1,13 +1,10 @@
 package com.hhplush.eCommerce.api.order;
 
-import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.PRODUCT_NOT_FOUND;
-
 import com.hhplush.eCommerce.api.order.dto.request.RequestCreateOrderDTO;
 import com.hhplush.eCommerce.api.order.dto.request.RequestCreateOrderDTO.RequestProducts;
 import com.hhplush.eCommerce.api.order.dto.response.ResponseCreateOrderDTO;
-import com.hhplush.eCommerce.business.order.OrderService;
+import com.hhplush.eCommerce.business.order.OrderUseCase;
 import com.hhplush.eCommerce.common.exception.ErrorResponse;
-import com.hhplush.eCommerce.common.exception.custom.ResourceNotFoundException;
 import com.hhplush.eCommerce.domain.order.Order;
 import com.hhplush.eCommerce.domain.order.OrderProduct;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-    private final OrderService orderService;
+    private final OrderUseCase orderUseCase;
 
 
     @Operation(summary = "주문 생성")
@@ -70,12 +67,6 @@ public class OrderController {
         Long userCouponId = requestCreateOrderDTO.userCouponId();
         List<RequestProducts> requestProducts = requestCreateOrderDTO.product();
 
-        // 제품 정보가 없을 경우 or 제품 리스트에 같은 아이디 제품이 중복으로 들어올 경우 체크
-        if (requestProducts.isEmpty()
-            || requestProducts.stream().distinct().count() != requestProducts.size()) {
-            throw new ResourceNotFoundException(PRODUCT_NOT_FOUND);
-        }
-
         // 주문 상품 생성 ( 주문 상품 리스트 생성 )
         List<OrderProduct> orderProductList = requestProducts.stream().map(
             requestProduct ->
@@ -83,13 +74,8 @@ public class OrderController {
                     .quantity(requestProduct.quantity()).build()
         ).toList();
 
-        // 주문 아이디 추출
-        List<Long> productIds = orderProductList.stream()
-            .map(OrderProduct::getProductId)
-            .toList();
-
-        Order order = orderService.createOrder(userId, userCouponId,
-            orderProductList, productIds);
+        Order order = orderUseCase.createOrder(userId, userCouponId,
+            orderProductList);
 
         return ResponseEntity.ok(ResponseCreateOrderDTO.builder()
             .orderId(order.getOrderId())

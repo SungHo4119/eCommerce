@@ -1,6 +1,6 @@
 package com.hhplush.eCommerce.infrastructure.order;
 
-import com.hhplush.eCommerce.business.order.IOrderRepository;
+import com.hhplush.eCommerce.domain.order.IOrderRepository;
 import com.hhplush.eCommerce.domain.order.Order;
 import com.hhplush.eCommerce.domain.order.OrderProduct;
 import java.util.List;

@@ -36,6 +36,11 @@ public class User {
     @Column(name = "point")
     Long point;
 
+    public User(String userName, Long point) {
+        this.userName = userName;
+        this.point = point;
+    }
+
 
     public void chargePoint(Long point) {
         this.point += point;

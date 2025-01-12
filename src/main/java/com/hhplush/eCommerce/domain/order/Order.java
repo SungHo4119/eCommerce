@@ -49,4 +49,8 @@ public class Order {
 
     @Column(name = "order_at")
     LocalDateTime orderAt;
+
+    public void orderStateChange(OrderState orderState) {
+        this.orderState = orderState;
+    }
 }
