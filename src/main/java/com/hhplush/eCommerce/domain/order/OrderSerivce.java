@@ -121,7 +121,7 @@ public class OrderSerivce {
 
     // 결재 성공하여 주문 상태 변경
     public void successOrder(Order order) {
-        order.orderStateChange(OrderState.COMPLETED);
+        order.setOrderState(OrderState.COMPLETED);
         orderRepository.orderSave(order);
     }
 }
