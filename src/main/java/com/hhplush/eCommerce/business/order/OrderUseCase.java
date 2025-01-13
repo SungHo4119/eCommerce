@@ -59,8 +59,11 @@ public class OrderUseCase {
         Order order = orderSerivce.createOrder(userId, userCouponId, orderAmount,
             coupon.getDiscountAmount());
 
-        // 재고 업데이트 / 상품 상태 업데이트
-        productService.saveAllProductQuantity(productQuantityList, productList);
+        // 재고가 없는 상품 추출
+        List<Product> emptyProducts = productService.findEmptyProducts(productList);
+
+        // 재고 업데이트
+        productService.saveAllProductQuantity(productQuantityList, emptyProducts);
 
         // 쿠폰 사용 처리
         couponService.useUserCoupon(userCoupon, true);

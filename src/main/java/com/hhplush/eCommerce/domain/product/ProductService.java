@@ -36,18 +36,22 @@ public class ProductService {
         return productQuantities;
     }
 
-    // 재고 업데이트 / 상품 상태 업데이트
-    public void saveAllProductQuantity(List<ProductQuantity> productQuantities,
-        List<Product> products) {
-        // 재고 업데이트
-        productRepository.productQuantitySaveAll(productQuantities);
-
-        // 상품 상태 업데이트
-        List<Product> emptyProducts = products.stream()
+    // OUT_OF_STOCK 인 상품 조회
+    public List<Product> findEmptyProducts(List<Product> products) {
+        return products.stream()
             .filter(product -> product.getProductState().equals(ProductState.OUT_OF_STOCK))
             .toList();
-        productRepository.productSaveAll(emptyProducts);
+    }
 
+    // 재고 업데이트 / 상품 상태 업데이트
+    public void saveAllProductQuantity(List<ProductQuantity> productQuantities,
+        List<Product> emptyProducts) {
+        // 재고 업데이트
+        productRepository.productQuantitySaveAll(productQuantities);
+        if (!emptyProducts.isEmpty()) {
+            // 상품 상태 업데이트
+            productRepository.productSaveAll(emptyProducts);
+        }
     }
 
     // 재고 복구
