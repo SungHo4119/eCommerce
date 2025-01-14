@@ -2,7 +2,6 @@ package com.hhplush.eCommerce.domain.user;
 
 import com.hhplush.eCommerce.common.exception.custom.ResourceNotFoundException;
 import com.hhplush.eCommerce.common.exception.message.ExceptionMessage;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +14,8 @@ public class UserService {
 
     // 유저 정보 조회
     public User getUserByUserId(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new ResourceNotFoundException(ExceptionMessage.USER_NOT_FOUND);
-        }
-        return user.get();
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessage.USER_NOT_FOUND));
     }
 
     public User chargePoint(User user, Long point) {

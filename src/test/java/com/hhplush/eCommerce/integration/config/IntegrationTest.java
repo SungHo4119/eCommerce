@@ -7,7 +7,6 @@ import com.hhplush.eCommerce.business.payment.PaymentUseCase;
 import com.hhplush.eCommerce.business.product.ProductUseCase;
 import com.hhplush.eCommerce.business.user.UserUseCase;
 import com.hhplush.eCommerce.domain.coupon.CouponService;
-import com.hhplush.eCommerce.domain.coupon.UserCouponService;
 import com.hhplush.eCommerce.domain.order.OrderSerivce;
 import com.hhplush.eCommerce.domain.payment.PaymentService;
 import com.hhplush.eCommerce.domain.product.ProductService;
@@ -45,7 +44,7 @@ public class IntegrationTest {
     @Autowired
     protected UserRepository userRepository;
     @Autowired
-    protected UserUseCase userService;
+    protected UserUseCase userUseCase;
     @Autowired
     protected UserService userService;
 
@@ -75,8 +74,6 @@ public class IntegrationTest {
     protected CouponUseCase couponUseCase;
     @Autowired
     protected CouponService couponService;
-    @Autowired
-    protected UserCouponService userCouponService;
     // 주문
     @Autowired
     protected OrderRepository orderRepository;
@@ -100,10 +97,15 @@ public class IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        userJPARepository.deleteAll();
-        productJPARepository.deleteAll();
-        couponJPARepository.deleteAll();
-        orderJPARepository.deleteAll();
         paymentJPARepository.deleteAll();
+        orderProductJPARepository.deleteAll();
+        orderJPARepository.deleteAll();
+        userCouponJPARepository.deleteAll();
+        couponQuantityJPARepository.deleteAll();
+        couponJPARepository.deleteAll();
+        productTopJPARepository.deleteAll();
+        productQuantityJPARepository.deleteAll();
+        productJPARepository.deleteAll();
+        userJPARepository.deleteAll();
     }
 }

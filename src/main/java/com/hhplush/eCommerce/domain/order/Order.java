@@ -49,4 +49,12 @@ public class Order {
 
     @Column(name = "order_at")
     LocalDateTime orderAt;
+
+    public void cancel() {
+        this.orderState = OrderState.FAILED;
+    }
+
+    public void complete() {
+        this.orderState = OrderState.COMPLETED;
+    }
 }

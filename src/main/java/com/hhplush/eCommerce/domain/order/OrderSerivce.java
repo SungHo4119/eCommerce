@@ -12,7 +12,6 @@ import com.hhplush.eCommerce.domain.product.ProductQuantity;
 import com.hhplush.eCommerce.domain.product.ProductState;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -33,11 +32,8 @@ public class OrderSerivce {
 
     // 주문 조회
     public Order getOrderByOrderId(Long orderId) {
-        Optional<Order> order = orderRepository.getOrder(orderId);
-        if (order.isEmpty()) {
-            throw new ResourceNotFoundException(ORDER_NOT_FOUND);
-        }
-        return order.get();
+        return orderRepository.getOrder(orderId)
+            .orElseThrow(() -> new ResourceNotFoundException(ORDER_NOT_FOUND));
     }
 
     // 주문 상품 조회
@@ -71,7 +67,7 @@ public class OrderSerivce {
 
     // 주문 취소 처리
     public void cancelOrder(Order order) {
-        order.setOrderState(OrderState.FAILED);
+        order.cancel();
         orderRepository.orderSave(order);
     }
 
@@ -121,7 +117,7 @@ public class OrderSerivce {
 
     // 결재 성공하여 주문 상태 변경
     public void successOrder(Order order) {
-        order.setOrderState(OrderState.COMPLETED);
+        order.complete();
         orderRepository.orderSave(order);
     }
 }

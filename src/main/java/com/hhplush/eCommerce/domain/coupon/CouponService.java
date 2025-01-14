@@ -23,19 +23,15 @@ public class CouponService {
 
     // 쿠폰 정보 조회
     public Coupon getCouponByCouponId(Long couponId) {
-        // 쿠폰 정보 체크
-        Optional<Coupon> coupon = couponRepository.findById(couponId);
-        if (coupon.isEmpty()) {
-            throw new ResourceNotFoundException(COUPON_NOT_FOUND);
-        }
-        return coupon.get();
+        return couponRepository.findById(couponId)
+            .orElseThrow(() -> new ResourceNotFoundException(COUPON_NOT_FOUND));
     }
 
 
     // 쿠폰 수량 체크
     public CouponQuantity checkCouponQuantity(Long couponId) {
         CouponQuantity couponQuantity = couponRepository.findCouponQuantityByCouponId(couponId);
-        if (couponQuantity.getQuantity() <= 0) {
+        if (couponQuantity.isValidQuantity()) {
             throw new LimitExceededException(COUPON_LIMIT_EXCEEDED);
         }
         return couponQuantity;
@@ -82,11 +78,8 @@ public class CouponService {
 
     // 사용자 쿠폰 조회
     public UserCoupon getUserCouponByUserCouponId(Long userCouponId) {
-        Optional<UserCoupon> userCoupon = couponRepository.userCouponfindById(userCouponId);
-        if (userCoupon.isEmpty()) {
-            throw new ResourceNotFoundException(COUPON_NOT_FOUND);
-        }
-        return userCoupon.get();
+        return couponRepository.userCouponfindById(userCouponId)
+            .orElseThrow(() -> new ResourceNotFoundException(COUPON_NOT_FOUND));
     }
 
     // 사용자 쿠폰 목록 조회
