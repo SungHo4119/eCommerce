@@ -12,15 +12,18 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/payments")
 public class PaymentController {
@@ -55,7 +58,7 @@ public class PaymentController {
     })
     @PostMapping
     public ResponseEntity<ResponseCreatePayment> createPayment(
-        @RequestBody RequestCreatePaymentDTO requestCreatePaymentDTO
+        @Valid @RequestBody RequestCreatePaymentDTO requestCreatePaymentDTO
     ) {
         Payment payment = paymentUseCase.processPayment(requestCreatePaymentDTO.orderId());
         return ResponseEntity.ok(
