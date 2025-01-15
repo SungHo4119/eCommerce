@@ -1,6 +1,7 @@
 package com.hhplush.eCommerce.integration.config;
 
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hhplush.eCommerce.api.user.UserController;
 import com.hhplush.eCommerce.business.coupon.CouponUseCase;
 import com.hhplush.eCommerce.business.order.OrderUseCase;
 import com.hhplush.eCommerce.business.payment.PaymentUseCase;
@@ -26,19 +27,22 @@ import com.hhplush.eCommerce.infrastructure.product.IProductTopJPARepository;
 import com.hhplush.eCommerce.infrastructure.product.ProductRepository;
 import com.hhplush.eCommerce.infrastructure.user.IUserJPARepository;
 import com.hhplush.eCommerce.infrastructure.user.UserRepository;
+import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 
-@Execution(ExecutionMode.SAME_THREAD)
-@SpringBootTest
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//@AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class IntegrationTest {
 
     // 유저
+    @Autowired
+    protected UserController userController;
     @Autowired
     protected IUserJPARepository userJPARepository;
     @Autowired
@@ -47,7 +51,6 @@ public class IntegrationTest {
     protected UserUseCase userUseCase;
     @Autowired
     protected UserService userService;
-
     // 제품
     @Autowired
     protected ProductRepository productRepository;
@@ -95,8 +98,15 @@ public class IntegrationTest {
     @Autowired
     protected PaymentService paymentService;
 
+    @Autowired
+    protected ObjectMapper objectMapper;
+    protected String baseUrl = "http://localhost:";
+    @LocalServerPort
+    int port;
+
     @BeforeEach
     void setUp() {
+        RestAssured.port = port;
         paymentJPARepository.deleteAll();
         orderProductJPARepository.deleteAll();
         orderJPARepository.deleteAll();
@@ -108,4 +118,5 @@ public class IntegrationTest {
         productJPARepository.deleteAll();
         userJPARepository.deleteAll();
     }
+
 }

@@ -6,6 +6,7 @@ import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.IN
 import com.hhplush.eCommerce.api.user.dto.request.RequestChargeUserPointDTO;
 import com.hhplush.eCommerce.api.user.dto.response.ResponseChargeUserPointDTO;
 import com.hhplush.eCommerce.api.user.dto.response.ResponseGetUserCoupon;
+import com.hhplush.eCommerce.api.user.dto.response.ResponseGetUserCoupon.Coupon;
 import com.hhplush.eCommerce.api.user.dto.response.ResponseGetUserDTO;
 import com.hhplush.eCommerce.business.user.UserUseCase;
 import com.hhplush.eCommerce.common.exception.ErrorResponse;
@@ -35,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserUseCase userService;
+    private final UserUseCase userUseCase;
 
     @Operation(summary = "유저 조회")
     @ApiResponses(value = {
@@ -57,7 +58,7 @@ public class UserController {
         @PathVariable("userId") @Min(value = 1, message = INVALID_ID)
         @Schema(description = "유저 ID", example = "1") Long userId
     ) {
-        User user = userService.getUser(userId);
+        User user = userUseCase.getUser(userId);
         return ResponseEntity.ok(
             ResponseGetUserDTO.builder().userId(user.getUserId()).userName(user.getUserName())
                 .point(user.getPoint()).build()
@@ -86,7 +87,7 @@ public class UserController {
         @Schema(description = "유저 ID", example = "1") Long userId,
         @Valid @RequestBody RequestChargeUserPointDTO requestChargeUserPointDTO
     ) {
-        User user = userService.chargeUserPoint(userId, requestChargeUserPointDTO.point());
+        User user = userUseCase.chargeUserPoint(userId, requestChargeUserPointDTO.point());
         return ResponseEntity.ok(
             ResponseChargeUserPointDTO.builder().userId(user.getUserId())
                 .userName(user.getUserName())
@@ -110,7 +111,7 @@ public class UserController {
     public ResponseEntity<List<ResponseGetUserCoupon>> getUserCoupon(
         @PathVariable("userId") @Min(value = 1, message = INVALID_ID) Long userId
     ) {
-        List<UserCoupon> userCoupon = userService.getUserCoupon(userId);
+        List<UserCoupon> userCoupon = userUseCase.getUserCoupon(userId);
 
         return ResponseEntity.ok(userCoupon.stream()
             .map(coupon -> ResponseGetUserCoupon.builder()
@@ -120,7 +121,7 @@ public class UserController {
                 .useAt(coupon.getUseAt())
                 .createAt(coupon.getCreateAt())
                 .coupon(
-                    ResponseGetUserCoupon.Coupon.builder()
+                    Coupon.builder()
                         .couponId(coupon.getCoupon().getCouponId())
                         .couponName(coupon.getCoupon().getCouponName())
                         .discountAmount(coupon.getCoupon().getDiscountAmount())
@@ -130,3 +131,4 @@ public class UserController {
             .toList());
     }
 }
+
