@@ -5,6 +5,7 @@ import com.hhplush.eCommerce.common.exception.ErrorResponse;
 import com.hhplush.eCommerce.common.exception.custom.AlreadyExistsException;
 import com.hhplush.eCommerce.common.exception.custom.BadRequestException;
 import com.hhplush.eCommerce.common.exception.custom.InvalidPaymentCancellationException;
+import com.hhplush.eCommerce.common.exception.custom.LimitExceededException;
 import com.hhplush.eCommerce.common.exception.custom.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -47,6 +49,14 @@ public class GlobalExceptionHandler {
             .body(new ErrorResponse(String.valueOf(HttpStatus.BAD_REQUEST), errorMessages));
     }
 
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(
+        HandlerMethodValidationException e) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(new ErrorResponse(String.valueOf(HttpStatus.BAD_REQUEST), e.getMessage()));
+    }
+
     // 404
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
@@ -58,6 +68,13 @@ public class GlobalExceptionHandler {
     // 409
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleAlreadyExistsException(AlreadyExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(new ErrorResponse(String.valueOf(HttpStatus.CONFLICT), e.getMessage()));
+    }
+
+    // 409
+    @ExceptionHandler(LimitExceededException.class)
+    public ResponseEntity<ErrorResponse> handleLimitExceededException(LimitExceededException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(new ErrorResponse(String.valueOf(HttpStatus.CONFLICT), e.getMessage()));
     }

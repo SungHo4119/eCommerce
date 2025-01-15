@@ -42,6 +42,6 @@ public class CouponQuantity {
     }
 
     public boolean isValidQuantity() {
-        return this.quantity > 0;
+        return this.quantity <= 0;
     }
 }

@@ -13,9 +13,11 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/coupons")
 public class CouponController {
@@ -58,21 +61,21 @@ public class CouponController {
     })
     @PostMapping("/{couponId}/issued")
     public ResponseEntity<ResponseIssueCouponDTO> issueCoupon(
-        @PathVariable("couponId") @Min(value = 1, message = INVALID_ID)
-        @Schema(description = "쿠폰 ID", example = "1") Long couponId,
-        @RequestBody RequestIssueCouponDTO requestIssueCouponDTO
+        @Schema(description = "쿠폰 ID", example = "1")
+        @PathVariable("couponId") @Min(value = 1, message = INVALID_ID) Long couponId,
+        @Valid @RequestBody RequestIssueCouponDTO requestIssueCouponDTO
     ) {
         UserCoupon userCoupon = couponUseCase.issueCoupon(couponId,
             requestIssueCouponDTO.userId());
-        return ResponseEntity.ok(ResponseIssueCouponDTO.builder()
-            .userCouponId(userCoupon.getUserCouponId())
-            .couponId(userCoupon.getCoupon().getCouponId())
-            .userId(userCoupon.getUserId())
-            .couponUse(userCoupon.getCouponUse())
-            .useAt(userCoupon.getUseAt())
-            .createAt(userCoupon.getCreateAt())
-            .build()
-        );
+        return
+            ResponseEntity.ok(ResponseIssueCouponDTO.builder()
+                .userCouponId(userCoupon.getUserCouponId())
+                .couponId(userCoupon.getCoupon().getCouponId())
+                .userId(userCoupon.getUserId())
+                .couponUse(userCoupon.getCouponUse())
+                .useAt(userCoupon.getUseAt())
+                .createAt(userCoupon.getCreateAt())
+                .build());
     }
 
 }
