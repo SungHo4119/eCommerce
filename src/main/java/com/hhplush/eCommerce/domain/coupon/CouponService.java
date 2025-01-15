@@ -72,7 +72,7 @@ public class CouponService {
     // 사용자 쿠폰 사용 여부 확인
     public void CheckUserCouponIsUsed(UserCoupon userCoupon) {
         if (userCoupon.getCouponUse()) {
-            throw new ResourceNotFoundException(COUPON_USE_ALREADY_EXISTS);
+            throw new AlreadyExistsException(COUPON_USE_ALREADY_EXISTS);
         }
     }
 

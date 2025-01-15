@@ -13,15 +13,18 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
 public class OrderController {
@@ -60,7 +63,7 @@ public class OrderController {
     })
     @PostMapping
     public ResponseEntity<ResponseCreateOrderDTO> createOrder(
-        @RequestBody RequestCreateOrderDTO requestCreateOrderDTO
+        @Valid @RequestBody RequestCreateOrderDTO requestCreateOrderDTO
     ) {
 
         Long userId = requestCreateOrderDTO.userId();
