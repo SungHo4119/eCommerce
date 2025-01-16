@@ -97,8 +97,10 @@ public class OrderUseCaseTest extends IntegrationTest {
             productQuantity = productQuantityJPARepository.findById(
                 productQuantity.getProductQuantityId()).get();
             List<Order> order = orderJPARepository.findAll();
+            product = productJPARepository.findById(product.getProductId()).get();
             assertEquals(0L, productQuantity.getQuantity());
             assertEquals(10, order.size());
+            assertEquals(ProductState.OUT_OF_STOCK, product.getProductState());
 
         }
     }
