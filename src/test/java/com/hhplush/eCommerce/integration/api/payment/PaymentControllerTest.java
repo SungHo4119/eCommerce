@@ -4,10 +4,16 @@ import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.IN
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.INVALID_ID;
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.ORDER_NOT_FOUND;
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import com.hhplush.eCommerce.api.payment.dto.request.RequestCreatePaymentDTO;
 import com.hhplush.eCommerce.domain.order.Order;
+import com.hhplush.eCommerce.domain.order.OrderProduct;
+import com.hhplush.eCommerce.domain.order.OrderState;
+import com.hhplush.eCommerce.domain.product.Product;
+import com.hhplush.eCommerce.domain.product.ProductQuantity;
+import com.hhplush.eCommerce.domain.product.ProductState;
 import com.hhplush.eCommerce.domain.user.User;
 import com.hhplush.eCommerce.integration.config.IntegrationTest;
 import io.restassured.RestAssured;
@@ -83,6 +89,29 @@ class PaymentControllerTest extends IntegrationTest {
                 .build();
             order = orderJPARepository.save(order);
 
+            Product product = Product.builder()
+                .price(100L)
+                .productState(ProductState.OUT_OF_STOCK)
+                .productName("Test Product")
+                .build();
+
+            product = productJPARepository.save(product);
+
+            ProductQuantity productQuantity = ProductQuantity.builder()
+                .productId(product.getProductId())
+                .quantity(0L)
+                .build();
+
+            productQuantity = productQuantityJPARepository.save(productQuantity);
+
+            OrderProduct orderProduct = OrderProduct.builder()
+                .orderId(order.getOrderId())
+                .productId(product.getProductId())
+                .quantity(1L)
+                .build();
+
+            orderProduct = orderProductJPARepository.save(orderProduct);
+
             RequestCreatePaymentDTO request = new RequestCreatePaymentDTO(order.getOrderId());
 
             // when & then
@@ -97,6 +126,18 @@ class PaymentControllerTest extends IntegrationTest {
                 .statusCode(409)
                 .body("code", equalTo(String.valueOf(HttpStatus.CONFLICT)))
                 .body("message", equalTo(INSUFFICIENT_BALANCE));
+
+            // 재고 롤백 확인
+
+            order = orderJPARepository.findById(order.getOrderId()).get();
+
+            productQuantity = productQuantityJPARepository.findById(
+                productQuantity.getProductQuantityId()).get();
+
+            assertThat(order.getOrderState()).isEqualTo(OrderState.FAILED);
+            assertThat(productQuantity.getQuantity()).isEqualTo(1L);
+
+
         }
 
         // 최종 성공 =====================================
