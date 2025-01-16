@@ -7,6 +7,7 @@ import com.hhplush.eCommerce.business.order.OrderUseCase;
 import com.hhplush.eCommerce.business.payment.PaymentUseCase;
 import com.hhplush.eCommerce.business.product.ProductUseCase;
 import com.hhplush.eCommerce.business.user.UserUseCase;
+import com.hhplush.eCommerce.common.filter.CustomLoggingFilter;
 import com.hhplush.eCommerce.domain.coupon.CouponService;
 import com.hhplush.eCommerce.domain.order.OrderSerivce;
 import com.hhplush.eCommerce.domain.payment.PaymentService;
@@ -100,6 +101,10 @@ public class IntegrationTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected CustomLoggingFilter customLoggingFilter;
+
     protected String baseUrl = "http://localhost:";
     @LocalServerPort
     int port;
