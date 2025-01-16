@@ -260,8 +260,8 @@ public class CouponServiceTest {
                 .build();
 
             // when
-            ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class,
+            AlreadyExistsException exception = assertThrows(
+                AlreadyExistsException.class,
                 () -> couponService.CheckUserCouponIsUsed(userCoupon)
             );
 
