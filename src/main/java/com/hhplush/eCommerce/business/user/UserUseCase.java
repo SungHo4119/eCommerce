@@ -29,7 +29,7 @@ public class UserUseCase {
 
     // 유저 포인트 충전
     public User chargeUserPoint(Long userId, Long point) {
-        User user = userService.getUserByUserId(userId);
+        User user = userService.getUserByUserIdLock(userId);
         userService.chargePoint(user, point);
         return user;
     }

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 @Component
 public interface IUserRepository {
 
+    Optional<User> findByIdLock(Long userId);
+
     Optional<User> findById(Long userId);
 
     User save(User user);
