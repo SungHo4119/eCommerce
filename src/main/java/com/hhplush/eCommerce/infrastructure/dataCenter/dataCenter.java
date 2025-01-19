@@ -1,6 +1,6 @@
 package com.hhplush.eCommerce.infrastructure.dataCenter;
 
-import com.hhplush.eCommerce.business.dataCenter.IDataCenter;
+import com.hhplush.eCommerce.domain.IDataCenter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

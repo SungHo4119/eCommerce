@@ -1,6 +1,6 @@
 package com.hhplush.eCommerce.infrastructure.payment;
 
-import com.hhplush.eCommerce.business.payment.IPaymentRepository;
+import com.hhplush.eCommerce.domain.payment.IPaymentRepository;
 import com.hhplush.eCommerce.domain.payment.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

@@ -2,7 +2,6 @@ package com.hhplush.eCommerce.domain.coupon;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,13 +36,9 @@ public class UserCoupon {
     @Column(name = "user_id", nullable = false)
     Long userId;
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_id", referencedColumnName = "coupon_id", insertable = false, updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "coupon_id", referencedColumnName = "coupon_id")
     Coupon coupon;
-
-    @Column(name = "coupon_id", nullable = false)
-    Long couponId;
 
     @Column(name = "coupon_use")
     Boolean couponUse;
@@ -51,5 +46,14 @@ public class UserCoupon {
     LocalDateTime useAt;
     @Column(name = "create_at")
     LocalDateTime createAt;
+
+    // 쿠폰 발급시 사용자에게 쿠폰을 발급한다.
+    public UserCoupon(Coupon coupon, Long userId) {
+        this.coupon = coupon;
+        this.userId = userId;
+        this.couponUse = false;
+        this.useAt = null;
+        this.createAt = LocalDateTime.now();
+    }
 
 }

@@ -1,17 +1,18 @@
 package com.hhplush.eCommerce.integration.config;
 
-
-import com.hhplush.eCommerce.business.coupon.CouponLoader;
-import com.hhplush.eCommerce.business.coupon.CouponService;
-import com.hhplush.eCommerce.business.coupon.UserCouponLoader;
-import com.hhplush.eCommerce.business.order.OrderLoader;
-import com.hhplush.eCommerce.business.order.OrderService;
-import com.hhplush.eCommerce.business.payment.PaymentLoader;
-import com.hhplush.eCommerce.business.payment.PaymentService;
-import com.hhplush.eCommerce.business.product.ProductLoader;
-import com.hhplush.eCommerce.business.product.ProductService;
-import com.hhplush.eCommerce.business.user.UserLoader;
-import com.hhplush.eCommerce.business.user.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hhplush.eCommerce.api.user.UserController;
+import com.hhplush.eCommerce.business.coupon.CouponUseCase;
+import com.hhplush.eCommerce.business.order.OrderUseCase;
+import com.hhplush.eCommerce.business.payment.PaymentUseCase;
+import com.hhplush.eCommerce.business.product.ProductUseCase;
+import com.hhplush.eCommerce.business.user.UserUseCase;
+import com.hhplush.eCommerce.common.filter.CustomLoggingFilter;
+import com.hhplush.eCommerce.domain.coupon.CouponService;
+import com.hhplush.eCommerce.domain.order.OrderSerivce;
+import com.hhplush.eCommerce.domain.payment.PaymentService;
+import com.hhplush.eCommerce.domain.product.ProductService;
+import com.hhplush.eCommerce.domain.user.UserService;
 import com.hhplush.eCommerce.infrastructure.coupon.CouponRepository;
 import com.hhplush.eCommerce.infrastructure.coupon.ICouponJPARepository;
 import com.hhplush.eCommerce.infrastructure.coupon.ICouponQuantityJPARepository;
@@ -27,28 +28,30 @@ import com.hhplush.eCommerce.infrastructure.product.IProductTopJPARepository;
 import com.hhplush.eCommerce.infrastructure.product.ProductRepository;
 import com.hhplush.eCommerce.infrastructure.user.IUserJPARepository;
 import com.hhplush.eCommerce.infrastructure.user.UserRepository;
+import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 
-@Execution(ExecutionMode.SAME_THREAD)
-@SpringBootTest
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//@AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class IntegrationTest {
 
     // 유저
     @Autowired
+    protected UserController userController;
+    @Autowired
     protected IUserJPARepository userJPARepository;
     @Autowired
     protected UserRepository userRepository;
     @Autowired
-    protected UserService userService;
+    protected UserUseCase userUseCase;
     @Autowired
-    protected UserLoader userLoader;
-
+    protected UserService userService;
     // 제품
     @Autowired
     protected ProductRepository productRepository;
@@ -59,9 +62,9 @@ public class IntegrationTest {
     @Autowired
     protected IProductTopJPARepository productTopJPARepository;
     @Autowired
-    protected ProductService productService;
+    protected ProductUseCase productUseCase;
     @Autowired
-    protected ProductLoader productLoader;
+    protected ProductService productService;
     // 쿠폰
     @Autowired
     protected CouponRepository couponRepository;
@@ -72,11 +75,9 @@ public class IntegrationTest {
     @Autowired
     protected IUserCouponJPARepository userCouponJPARepository;
     @Autowired
+    protected CouponUseCase couponUseCase;
+    @Autowired
     protected CouponService couponService;
-    @Autowired
-    protected CouponLoader couponLoader;
-    @Autowired
-    protected UserCouponLoader userCouponLoader;
     // 주문
     @Autowired
     protected OrderRepository orderRepository;
@@ -85,25 +86,42 @@ public class IntegrationTest {
     @Autowired
     protected IOrderProductJPARepository orderProductJPARepository;
     @Autowired
-    protected OrderLoader orderLoader;
+    protected OrderSerivce orderSerivce;
     @Autowired
-    protected OrderService orderService;
+    protected OrderUseCase orderUseCase;
     // 결재
     @Autowired
     protected PaymentRepository paymentRepository;
     @Autowired
     protected IPaymentJPARepository paymentJPARepository;
     @Autowired
-    protected PaymentService paymentService;
+    protected PaymentUseCase paymentUseCase;
     @Autowired
-    protected PaymentLoader paymentLoader;
+    protected PaymentService paymentService;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected CustomLoggingFilter customLoggingFilter;
+
+    protected String baseUrl = "http://localhost:";
+    @LocalServerPort
+    int port;
 
     @BeforeEach
     void setUp() {
-        userJPARepository.deleteAll();
-        productJPARepository.deleteAll();
-        couponJPARepository.deleteAll();
-        orderJPARepository.deleteAll();
+        RestAssured.port = port;
         paymentJPARepository.deleteAll();
+        orderProductJPARepository.deleteAll();
+        orderJPARepository.deleteAll();
+        userCouponJPARepository.deleteAll();
+        couponQuantityJPARepository.deleteAll();
+        couponJPARepository.deleteAll();
+        productTopJPARepository.deleteAll();
+        productQuantityJPARepository.deleteAll();
+        productJPARepository.deleteAll();
+        userJPARepository.deleteAll();
     }
+
 }

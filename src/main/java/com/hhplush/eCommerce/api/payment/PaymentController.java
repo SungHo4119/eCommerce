@@ -3,7 +3,7 @@ package com.hhplush.eCommerce.api.payment;
 import com.hhplush.eCommerce.api.order.dto.response.ResponseCreateOrderDTO;
 import com.hhplush.eCommerce.api.payment.dto.request.RequestCreatePaymentDTO;
 import com.hhplush.eCommerce.api.payment.dto.response.ResponseCreatePayment;
-import com.hhplush.eCommerce.business.payment.PaymentService;
+import com.hhplush.eCommerce.business.payment.PaymentUseCase;
 import com.hhplush.eCommerce.common.exception.ErrorResponse;
 import com.hhplush.eCommerce.domain.payment.Payment;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,20 +12,23 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/payments")
 public class PaymentController {
 
-    private final PaymentService paymentService;
+    private final PaymentUseCase paymentUseCase;
 
     @Operation(summary = "결재")
     @ApiResponses(value = {
@@ -55,9 +58,9 @@ public class PaymentController {
     })
     @PostMapping
     public ResponseEntity<ResponseCreatePayment> createPayment(
-        @RequestBody RequestCreatePaymentDTO requestCreatePaymentDTO
+        @Valid @RequestBody RequestCreatePaymentDTO requestCreatePaymentDTO
     ) {
-        Payment payment = paymentService.processPayment(requestCreatePaymentDTO.orderId());
+        Payment payment = paymentUseCase.processPayment(requestCreatePaymentDTO.orderId());
         return ResponseEntity.ok(
             ResponseCreatePayment.builder()
                 .paymentId(payment.getPaymentId())

@@ -1,6 +1,6 @@
 package com.hhplush.eCommerce.infrastructure.product;
 
-import com.hhplush.eCommerce.business.product.IProductRepository;
+import com.hhplush.eCommerce.domain.product.IProductRepository;
 import com.hhplush.eCommerce.domain.product.Product;
 import com.hhplush.eCommerce.domain.product.ProductQuantity;
 import com.hhplush.eCommerce.domain.product.ProductTop;

@@ -1,5 +1,8 @@
 package com.hhplush.eCommerce.domain.product;
 
+import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.PRODUCT_LIMIT_EXCEEDED;
+
+import com.hhplush.eCommerce.common.exception.custom.LimitExceededException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +35,9 @@ public class ProductQuantity {
     Long quantity;
 
     public void decreaseProductCount(Long quantity) {
+        if (this.quantity < quantity) {
+            throw new LimitExceededException(PRODUCT_LIMIT_EXCEEDED);
+        }
         this.quantity = this.quantity - quantity;
     }
 

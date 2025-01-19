@@ -1,9 +1,10 @@
 package com.hhplush.eCommerce.infrastructure.coupon;
 
-import com.hhplush.eCommerce.business.coupon.ICouponRepository;
 import com.hhplush.eCommerce.domain.coupon.Coupon;
 import com.hhplush.eCommerce.domain.coupon.CouponQuantity;
+import com.hhplush.eCommerce.domain.coupon.ICouponRepository;
 import com.hhplush.eCommerce.domain.coupon.UserCoupon;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -50,5 +51,11 @@ public class CouponRepository implements ICouponRepository {
     @Override
     public Optional<UserCoupon> userCouponfindById(Long userCouponId) {
         return userCouponJPARepository.findById(userCouponId);
+    }
+
+
+    @Override
+    public List<UserCoupon> findUserCouponByUserId(Long userId) {
+        return userCouponJPARepository.findCouponsByUserId(userId);
     }
 }
