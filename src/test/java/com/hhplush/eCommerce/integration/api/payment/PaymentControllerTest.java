@@ -3,6 +3,7 @@ package com.hhplush.eCommerce.integration.api.payment;
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.INSUFFICIENT_BALANCE;
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.INVALID_ID;
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.ORDER_NOT_FOUND;
+import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.ORDER_STATE_CONFLICT;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -71,6 +72,41 @@ class PaymentControllerTest extends IntegrationTest {
                 .body("code", equalTo(String.valueOf(HttpStatus.NOT_FOUND)))
                 .body("message", equalTo(ORDER_NOT_FOUND));
         }
+
+        @DisplayName("주문이 존재하고 주문이 이미 처리된 경우 ConflictExceptionError 예외가 발생한다.")
+        @Test
+        void createPayment_ConflictExceptionError() throws Exception {
+            // given
+            RequestCreatePaymentDTO request = new RequestCreatePaymentDTO(1L);
+
+            User user = User.builder()
+                .userName("Test User")
+                .point(50L) // 잔액 부족
+                .build();
+            user = userJPARepository.save(user);
+
+            Order order = Order.builder()
+                .userId(user.getUserId())
+                .orderAmount(100L)
+                .paymentAmount(100L)
+                .orderState(OrderState.COMPLETED)
+                .build();
+            order = orderJPARepository.save(order);
+
+            // when & then
+            given()
+                .baseUri(baseUrl + RestAssured.port)
+                .contentType("application/json")
+                .body(objectMapper.writeValueAsString(request))
+                .when()
+                .post("/api/payments")
+                .then()
+                .log().all()
+                .statusCode(409)
+                .body("code", equalTo(String.valueOf(HttpStatus.CONFLICT)))
+                .body("message", equalTo(ORDER_STATE_CONFLICT));
+        }
+
 
         @DisplayName("잔액이 부족할 경우 INSUFFICIENT_BALANCE 예외가 발생한다.")
         @Test

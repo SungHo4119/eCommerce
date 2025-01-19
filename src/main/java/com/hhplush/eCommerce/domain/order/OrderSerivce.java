@@ -2,9 +2,11 @@ package com.hhplush.eCommerce.domain.order;
 
 
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.ORDER_NOT_FOUND;
+import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.ORDER_STATE_CONFLICT;
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.PRODUCT_LIMIT_EXCEEDED;
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.PRODUCT_NOT_FOUND;
 
+import com.hhplush.eCommerce.common.exception.custom.ConflictExceptionError;
 import com.hhplush.eCommerce.common.exception.custom.LimitExceededException;
 import com.hhplush.eCommerce.common.exception.custom.ResourceNotFoundException;
 import com.hhplush.eCommerce.domain.product.Product;
@@ -34,6 +36,18 @@ public class OrderSerivce {
     public Order getOrderByOrderId(Long orderId) {
         return orderRepository.getOrder(orderId)
             .orElseThrow(() -> new ResourceNotFoundException(ORDER_NOT_FOUND));
+    }
+
+    // 주문 조회 락 적용
+    public Order getOrderByOrderIdWithLock(Long orderId) {
+        Order order = orderRepository.getOrderWithLock(orderId)
+            .orElseThrow(() -> new ResourceNotFoundException(ORDER_NOT_FOUND));
+
+        if (order.getOrderState() == OrderState.COMPLETED) {
+            throw new ConflictExceptionError(ORDER_STATE_CONFLICT);
+        }
+
+        return order;
     }
 
     // 주문 상품 조회

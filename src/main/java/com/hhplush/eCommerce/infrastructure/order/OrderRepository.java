@@ -22,6 +22,11 @@ public class OrderRepository implements IOrderRepository {
         return orderJPARepository.findById(orderId);
     }
 
+    public Optional<Order> getOrderWithLock(Long orderId) {
+        // 주문 조회 ( 락 사용 )
+        return orderJPARepository.findByIdWithLock(orderId);
+    }
+
     public Order orderSave(Order order) {
         // 주문 저장
         return orderJPARepository.save(order);

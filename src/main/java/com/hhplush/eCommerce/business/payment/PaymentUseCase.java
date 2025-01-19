@@ -30,7 +30,7 @@ public class PaymentUseCase {
 
     public Payment processPayment(Long orderId) {
         // 주문 정보 조회
-        Order order = orderSerivce.getOrderByOrderId(orderId);
+        Order order = orderSerivce.getOrderByOrderIdWithLock(orderId);
 
         // 유저 정보 조회
         User user = userService.getUserByUserId(order.getUserId());
