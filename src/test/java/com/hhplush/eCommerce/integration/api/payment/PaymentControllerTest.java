@@ -77,7 +77,6 @@ class PaymentControllerTest extends IntegrationTest {
         @Test
         void createPayment_ConflictExceptionError() throws Exception {
             // given
-            RequestCreatePaymentDTO request = new RequestCreatePaymentDTO(1L);
 
             User user = User.builder()
                 .userName("Test User")
@@ -92,6 +91,8 @@ class PaymentControllerTest extends IntegrationTest {
                 .orderState(OrderState.COMPLETED)
                 .build();
             order = orderJPARepository.save(order);
+
+            RequestCreatePaymentDTO request = new RequestCreatePaymentDTO(order.getOrderId());
 
             // when & then
             given()

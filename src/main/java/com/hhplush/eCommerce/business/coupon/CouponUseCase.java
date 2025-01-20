@@ -26,7 +26,7 @@ public class CouponUseCase {
         couponService.checkCouponValidity(userId, couponId);
 
         // 발급 하기 위한 수량 체크
-        CouponQuantity couponQuantity = couponService.checkCouponQuantity(couponId);
+        CouponQuantity couponQuantity = couponService.checkCouponQuantityWithLock(couponId);
 
         // 쿠폰 발급
         return couponService.issueUserCoupon(coupon, couponQuantity, user);
