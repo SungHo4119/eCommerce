@@ -31,7 +31,7 @@ public class CouponRepository implements ICouponRepository {
 
     // 쿠폰 수량 조회
     @Override
-    public CouponQuantity findCouponQuantityByCouponId(Long couponId) {
+    public CouponQuantity findCouponQuantityByCouponIdWithLock(Long couponId) {
         return couponQuantityJPARepository.findCouponQuantityByCouponId(couponId);
     }
 

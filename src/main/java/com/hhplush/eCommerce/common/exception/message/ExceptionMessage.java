@@ -24,4 +24,7 @@ public class ExceptionMessage {
 
     // TODO: ( InvalidPaymentCancellationException )
     public static final String INSUFFICIENT_BALANCE = "잔액이 부족합니다.";
+
+    // TODO: ( ConflictExceptionError )
+    public static final String ORDER_STATE_CONFLICT = "주문 올바르지 않습니다.";
 }

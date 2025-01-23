@@ -4,6 +4,7 @@ package com.hhplush.eCommerce;
 import com.hhplush.eCommerce.common.exception.ErrorResponse;
 import com.hhplush.eCommerce.common.exception.custom.AlreadyExistsException;
 import com.hhplush.eCommerce.common.exception.custom.BadRequestException;
+import com.hhplush.eCommerce.common.exception.custom.ConflictExceptionError;
 import com.hhplush.eCommerce.common.exception.custom.InvalidPaymentCancellationException;
 import com.hhplush.eCommerce.common.exception.custom.LimitExceededException;
 import com.hhplush.eCommerce.common.exception.custom.ResourceNotFoundException;
@@ -68,6 +69,13 @@ public class GlobalExceptionHandler {
     // 409
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleAlreadyExistsException(AlreadyExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(new ErrorResponse(String.valueOf(HttpStatus.CONFLICT), e.getMessage()));
+    }
+
+    // 409
+    @ExceptionHandler(ConflictExceptionError.class)
+    public ResponseEntity<ErrorResponse> handleAlreadyExistsException(ConflictExceptionError e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(new ErrorResponse(String.valueOf(HttpStatus.CONFLICT), e.getMessage()));
     }

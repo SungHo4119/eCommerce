@@ -29,8 +29,9 @@ public class CouponService {
 
 
     // 쿠폰 수량 체크
-    public CouponQuantity checkCouponQuantity(Long couponId) {
-        CouponQuantity couponQuantity = couponRepository.findCouponQuantityByCouponId(couponId);
+    public CouponQuantity checkCouponQuantityWithLock(Long couponId) {
+        CouponQuantity couponQuantity = couponRepository.findCouponQuantityByCouponIdWithLock(
+            couponId);
         if (couponQuantity.isValidQuantity()) {
             throw new LimitExceededException(COUPON_LIMIT_EXCEEDED);
         }

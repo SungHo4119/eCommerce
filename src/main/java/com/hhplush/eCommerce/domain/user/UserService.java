@@ -18,6 +18,12 @@ public class UserService {
             .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessage.USER_NOT_FOUND));
     }
 
+    // 유저 정보 조회(락을 걸며 조회)
+    public User getUserByUserIdLock(Long userId) {
+        return userRepository.findByIdLock(userId)
+            .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessage.USER_NOT_FOUND));
+    }
+
     public User chargePoint(User user, Long point) {
         user.chargePoint(point);
         userRepository.save(user);

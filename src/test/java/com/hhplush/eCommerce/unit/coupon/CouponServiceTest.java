@@ -101,11 +101,11 @@ public class CouponServiceTest {
                 .couponId(couponId)
                 .quantity(10L)
                 .build();
-            when(couponRepository.findCouponQuantityByCouponId(couponId))
+            when(couponRepository.findCouponQuantityByCouponIdWithLock(couponId))
                 .thenReturn(couponQuantity);
 
             // when
-            CouponQuantity result = couponService.checkCouponQuantity(couponId);
+            CouponQuantity result = couponService.checkCouponQuantityWithLock(couponId);
 
             // then
             assertEquals(couponQuantity, result);
@@ -120,13 +120,13 @@ public class CouponServiceTest {
                 .couponId(couponId)
                 .quantity(0L)
                 .build();
-            when(couponRepository.findCouponQuantityByCouponId(couponId))
+            when(couponRepository.findCouponQuantityByCouponIdWithLock(couponId))
                 .thenReturn(couponQuantity);
 
             // when
             LimitExceededException exception = assertThrows(
                 LimitExceededException.class,
-                () -> couponService.checkCouponQuantity(couponId)
+                () -> couponService.checkCouponQuantityWithLock(couponId)
             );
 
             // then
