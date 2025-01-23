@@ -12,6 +12,14 @@ services:
     volumes:
       - ./data/mysql/:/var/lib/mysql
 
+  redis:
+    image: redis:7.4.2
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - ./data/redis:/data  # Redis 데이터
+
 networks:
   default:
     driver: bridge
