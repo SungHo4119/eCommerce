@@ -14,6 +14,8 @@ public interface ICouponRepository {
     // 쿠폰 수량 조회
     CouponQuantity findCouponQuantityByCouponIdWithLock(Long couponId);
 
+    CouponQuantity findCouponQuantityByCouponId(Long couponId);
+
     // 쿠폰 수량 저장
     void couponQuantitySave(CouponQuantity couponQuantity);
 
