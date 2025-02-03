@@ -9,6 +9,8 @@ public interface IOrderRepository {
 
     Optional<Order> getOrder(Long orderId);
 
+    Optional<Order> getOrderWithLock(Long orderId);
+
     void orderProductSaveAll(List<OrderProduct> orderProductList);
 
     List<OrderProduct> getOrderProductByOrderId(Long orderId);

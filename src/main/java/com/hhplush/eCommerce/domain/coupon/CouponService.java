@@ -29,13 +29,24 @@ public class CouponService {
 
 
     // 쿠폰 수량 체크
-    public CouponQuantity checkCouponQuantity(Long couponId) {
-        CouponQuantity couponQuantity = couponRepository.findCouponQuantityByCouponId(couponId);
+    public CouponQuantity checkCouponQuantityWithLock(Long couponId) {
+        CouponQuantity couponQuantity = couponRepository.findCouponQuantityByCouponIdWithLock(
+            couponId);
         if (couponQuantity.isValidQuantity()) {
             throw new LimitExceededException(COUPON_LIMIT_EXCEEDED);
         }
         return couponQuantity;
     }
+
+    public CouponQuantity checkCouponQuantity(Long couponId) {
+        CouponQuantity couponQuantity = couponRepository.findCouponQuantityByCouponId(
+            couponId);
+        if (couponQuantity.isValidQuantity()) {
+            throw new LimitExceededException(COUPON_LIMIT_EXCEEDED);
+        }
+        return couponQuantity;
+    }
+
 
     // 쿠폰 발급
     public UserCoupon issueUserCoupon(Coupon coupon, CouponQuantity couponQuantity, User user) {

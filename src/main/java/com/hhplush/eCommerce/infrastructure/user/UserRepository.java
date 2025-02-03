@@ -14,6 +14,12 @@ public class UserRepository implements IUserRepository {
 
 
     @Override
+    public Optional<User> findByIdLock(Long id) {
+        return userJPARepository.findByIdWithLock(id);
+    }
+
+
+    @Override
     public Optional<User> findById(Long id) {
         return userJPARepository.findById(id);
     }

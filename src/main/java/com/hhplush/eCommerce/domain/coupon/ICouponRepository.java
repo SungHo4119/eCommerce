@@ -12,6 +12,8 @@ public interface ICouponRepository {
     Optional<UserCoupon> findByUserIdAndCouponId(Long userId, Long couponId);
 
     // 쿠폰 수량 조회
+    CouponQuantity findCouponQuantityByCouponIdWithLock(Long couponId);
+
     CouponQuantity findCouponQuantityByCouponId(Long couponId);
 
     // 쿠폰 수량 저장
