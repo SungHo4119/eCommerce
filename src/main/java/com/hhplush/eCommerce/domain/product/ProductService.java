@@ -7,9 +7,12 @@ import com.hhplush.eCommerce.domain.order.OrderProduct;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class ProductService {
 
@@ -70,6 +73,13 @@ public class ProductService {
 
     // 상위 상품 목록 조회
     public List<ProductTop> getTopProductList(LocalDate toDay) {
+        return productRepository.findProductTopByToDay(toDay);
+    }
+
+    // 상위 상품 목록 조회 ( 캐시 사용 )
+    @Cacheable(value = "productTop", keyGenerator = "localDateKeyGenerator")
+    public List<ProductTop> getTopProductListV2(LocalDate toDay) {
+        log.info("Fetching productTop from DB for date: {}", toDay);
         return productRepository.findProductTopByToDay(toDay);
     }
 }

@@ -69,4 +69,25 @@ public class ProductController {
             ).toList()
         );
     }
+
+    @Operation(summary = "상위 상품 목록 조회")
+    @GetMapping("/top/v2")
+    public ResponseEntity<List<ResponseProductTopDTO>> topProductsV2(
+    ) {
+        List<ProductTop> products = productUseCase.getTopProductsV2();
+
+        return ResponseEntity.ok(
+            products.stream().map(
+                product -> ResponseProductTopDTO.builder()
+                    .productTopId(product.getProductTopId())
+                    .productId(product.getProductId())
+                    .productName(product.getProductName())
+                    .price(product.getPrice())
+                    .productState(product.getProductState())
+                    .product_rank(product.getProductRank())
+                    .createAt(product.getCreateAt())
+                    .build()
+            ).toList()
+        );
+    }
 }
