@@ -10,6 +10,7 @@ import com.hhplush.eCommerce.domain.product.ProductQuantity;
 import com.hhplush.eCommerce.domain.product.ProductService;
 import com.hhplush.eCommerce.domain.user.User;
 import com.hhplush.eCommerce.domain.user.UserService;
+import com.hhplush.eCommerce.infrastructure.redis.IRedissonLock;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,47 @@ public class PaymentUseCase {
     public Payment processPayment(Long orderId) {
         // 주문 정보 조회
         Order order = orderSerivce.getOrderByOrderIdWithLock(orderId);
+
+        orderSerivce.checkOrderStateIsCompleted(order);
+
+        // 유저 정보 조회
+        User user = userService.getUserByUserId(order.getUserId());
+
+        // 결재
+        try {
+            // 잔액 차감
+            userService.decreaseUserPoint(user, order.getPaymentAmount());
+
+            // 주문 상태 변경
+            orderSerivce.successOrder(order);
+
+            // 결재 생성
+            return paymentService.createPayment(order);
+        } catch (InvalidPaymentCancellationException e) {
+            // 주문 취소
+            orderSerivce.cancelOrder(order);
+
+            // 주문 상품 조회
+            List<OrderProduct> orderProductList = orderSerivce.getOrderProductByOrderId(orderId);
+
+            // 상품 재고 조회
+            List<ProductQuantity> productQuantityList = productService.getProductQuantityListWithLock(
+                orderProductList.stream().map(OrderProduct::getProductId).toList());
+
+            // 상품 재고 복구
+            productService.cancelProductQuantity(productQuantityList, orderProductList);
+
+            // 결재 취소
+            throw e;
+        }
+    }
+
+    @IRedissonLock(key = "orderId")
+    public Payment processPaymentWithRedis(Long orderId) {
+        // 주문 정보 조회
+        Order order = orderSerivce.getOrderByOrderId(orderId);
+
+        orderSerivce.checkOrderStateIsCompleted(order);
 
         // 유저 정보 조회
         User user = userService.getUserByUserId(order.getUserId());

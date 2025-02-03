@@ -38,6 +38,16 @@ public class CouponService {
         return couponQuantity;
     }
 
+    public CouponQuantity checkCouponQuantity(Long couponId) {
+        CouponQuantity couponQuantity = couponRepository.findCouponQuantityByCouponId(
+            couponId);
+        if (couponQuantity.isValidQuantity()) {
+            throw new LimitExceededException(COUPON_LIMIT_EXCEEDED);
+        }
+        return couponQuantity;
+    }
+
+
     // 쿠폰 발급
     public UserCoupon issueUserCoupon(Coupon coupon, CouponQuantity couponQuantity, User user) {
         UserCoupon userCoupon = new UserCoupon(coupon, user.getUserId());

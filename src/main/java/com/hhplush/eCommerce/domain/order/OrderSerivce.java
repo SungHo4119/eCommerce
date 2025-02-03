@@ -43,11 +43,14 @@ public class OrderSerivce {
         Order order = orderRepository.getOrderWithLock(orderId)
             .orElseThrow(() -> new ResourceNotFoundException(ORDER_NOT_FOUND));
 
+        return order;
+    }
+
+    // 주문 상태 확인
+    public void checkOrderStateIsCompleted(Order order) {
         if (order.getOrderState() == OrderState.COMPLETED) {
             throw new ConflictExceptionError(ORDER_STATE_CONFLICT);
         }
-
-        return order;
     }
 
     // 주문 상품 조회
