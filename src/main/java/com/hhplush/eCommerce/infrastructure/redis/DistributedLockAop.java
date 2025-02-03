@@ -25,11 +25,11 @@ public class DistributedLockAop {
 
     private final RedissonClient redissonClient;
 
-    @Around("@annotation(com.hhplush.eCommerce.infrastructure.redis.IRedissonLock) && args(targetId,..)")
+    @Around("@annotation(com.hhplush.eCommerce.infrastructure.redis.DistributedLock) && args(targetId,..)")
     public Object aroundLock(ProceedingJoinPoint joinPoint, Long targetId)
         throws Throwable {
 
-        IRedissonLock redissonLock = getAnnotation(joinPoint);
+        DistributedLock redissonLock = getAnnotation(joinPoint);
 
         String lockName = getLockName(targetId, redissonLock);
         log.info("lockName: {}", lockName);
@@ -59,13 +59,13 @@ public class DistributedLockAop {
         }
     }
 
-    private IRedissonLock getAnnotation(ProceedingJoinPoint joinPoint) {
+    private DistributedLock getAnnotation(ProceedingJoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
-        return method.getAnnotation(IRedissonLock.class);
+        return method.getAnnotation(DistributedLock.class);
     }
 
-    private String getLockName(Long targetId, IRedissonLock redissonLock) {
+    private String getLockName(Long targetId, DistributedLock redissonLock) {
         String lockNameFormat = "lock:%s:%s";
         String relevantParameter = targetId.toString();
         return String.format(lockNameFormat, redissonLock.key(), relevantParameter);

@@ -4,7 +4,7 @@ import com.hhplush.eCommerce.domain.coupon.CouponService;
 import com.hhplush.eCommerce.domain.coupon.UserCoupon;
 import com.hhplush.eCommerce.domain.user.User;
 import com.hhplush.eCommerce.domain.user.UserService;
-import com.hhplush.eCommerce.infrastructure.redis.IRedissonLock;
+import com.hhplush.eCommerce.infrastructure.redis.DistributedLock;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class UserUseCase {
     }
 
     // 유저 포인트 충전(레디스 사용)
-    @IRedissonLock(key = "userId")
+    @DistributedLock(key = "userId")
     public User chargeUserPointWithRedis(Long userId, Long point) {
         // 분산락 제거
         User user = userService.getUserByUserId(userId);

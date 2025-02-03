@@ -6,7 +6,7 @@ import com.hhplush.eCommerce.domain.coupon.CouponService;
 import com.hhplush.eCommerce.domain.coupon.UserCoupon;
 import com.hhplush.eCommerce.domain.user.User;
 import com.hhplush.eCommerce.domain.user.UserService;
-import com.hhplush.eCommerce.infrastructure.redis.IRedissonLock;
+import com.hhplush.eCommerce.infrastructure.redis.DistributedLock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class CouponUseCase {
     }
 
     // 쿠폰 발급
-    @IRedissonLock(key = "couponId")
+    @DistributedLock(key = "couponId")
     public UserCoupon issueCouponWithRedis(Long couponId, Long userId) {
         User user = userService.getUserByUserId(userId);
         Coupon coupon = couponService.getCouponByCouponId(couponId);
