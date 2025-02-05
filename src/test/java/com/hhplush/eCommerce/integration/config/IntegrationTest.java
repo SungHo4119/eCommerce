@@ -129,6 +129,7 @@ public class IntegrationTest {
         productQuantityJPARepository.deleteAll();
         productJPARepository.deleteAll();
         userJPARepository.deleteAll();
+        redisService.deleteAllKeys();
     }
 
 }

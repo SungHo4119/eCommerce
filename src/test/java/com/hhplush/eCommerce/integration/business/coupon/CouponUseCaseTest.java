@@ -289,7 +289,7 @@ public class CouponUseCaseTest extends IntegrationTest {
             executorService.shutdown();
 
             // 스케쥴러 동작을 위한 슬립
-            Thread.sleep(1000);
+            Thread.sleep(5000);
 
             // then
             // 쿠폰 발급 확인
@@ -346,9 +346,10 @@ public class CouponUseCaseTest extends IntegrationTest {
 
             int couponsize = couponList.size();
             int usersize = userList.size();
-            for (int i = 0; i < 500; i++) {
-                Long couponId = random.nextLong(couponsize) + 1L;
-                Long userId = random.nextLong(usersize) + 1L;
+
+            for (int i = 0; i < 1500; i++) {
+                Long couponId = couponList.get(random.nextInt(couponsize)).getCouponId();
+                Long userId = userList.get(random.nextInt(usersize)).getUserId();
                 executorService.execute(() -> {
                     try {
                         couponUseCase.issueCouponRequest(couponId, userId);

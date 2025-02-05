@@ -43,4 +43,9 @@ public class RedisService {
         RMap<String, Boolean> issuedUsers = redissonClient.getMap(COUPON_ISSUED_KEY);
         return issuedUsers.size();
     }
+
+    // 레디스의 모든 키 삭제
+    public void deleteAllKeys() {
+        redissonClient.getKeys().flushall();
+    }
 }
