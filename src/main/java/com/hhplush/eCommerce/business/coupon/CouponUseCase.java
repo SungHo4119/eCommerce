@@ -65,7 +65,7 @@ public class CouponUseCase {
         couponService.couponToQueue(couponId.toString(), userId.toString());
     }
 
-    @Scheduled(fixedDelay = 500) // 0.1초마다 실행
+    @Scheduled(fixedDelay = 100) // 0.1초마다 실행
     public void processCouponQueue() {
         // 쿠폰 발급 대기열 처리
         couponService.processCouponQueue();
