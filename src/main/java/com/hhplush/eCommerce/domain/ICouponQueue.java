@@ -4,7 +4,7 @@ import org.redisson.api.RAtomicLong;
 import org.redisson.api.RMap;
 import org.redisson.api.RScoredSortedSet;
 
-public interface IRedisRepository {
+public interface ICouponQueue {
 
     // 키가 존재하는지 조회
     boolean isExists(String key);

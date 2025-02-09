@@ -14,7 +14,7 @@ import static com.hhplush.eCommerce.common.utils.RedisUtil.getIssuedCouponKey;
 import com.hhplush.eCommerce.common.exception.custom.AlreadyExistsException;
 import com.hhplush.eCommerce.common.exception.custom.LimitExceededException;
 import com.hhplush.eCommerce.common.exception.custom.ResourceNotFoundException;
-import com.hhplush.eCommerce.domain.IRedisRepository;
+import com.hhplush.eCommerce.domain.ICouponQueue;
 import com.hhplush.eCommerce.domain.user.User;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 public class CouponService {
 
     private final ICouponRepository couponRepository;
-    private final IRedisRepository RedisRepository;
+    private final ICouponQueue redisRepository;
 
     // 쿠폰 정보 조회
     public Coupon getCouponByCouponId(Long couponId) {
@@ -116,18 +116,18 @@ public class CouponService {
         String issuedCouponKey = getIssuedCouponKey(couponId, userId);
         String queueKey = COUPON_QUEUE_KEY;
         // 유저 발급 확인
-        if (RedisRepository.isExists(issuedCouponKey)) {
+        if (redisRepository.isExists(issuedCouponKey)) {
             return false;
         }
         // 쿠폰 수량 확인
-        RAtomicLong couponQuantity = RedisRepository.getAtomicLong(couponKey);
+        RAtomicLong couponQuantity = redisRepository.getAtomicLong(couponKey);
         if (couponQuantity.get() <= 0) {
             log.warn("쿠폰 수량 부족: key = {}", couponKey);
             return false;
         }
 
         // 발급하기 위한 큐에 적재
-        RedisRepository.addScoredSortedSet(queueKey, issuedCouponKey);
+        redisRepository.addScoredSortedSet(queueKey, issuedCouponKey);
         return true;
     }
 
@@ -137,11 +137,11 @@ public class CouponService {
         List<UserCoupon> userCouponsList = new java.util.ArrayList<>(List.of());
 
         // 쿠폰 대기열 조회
-        RScoredSortedSet<String> couponQueue = RedisRepository.getScoredSortedSet(COUPON_QUEUE_KEY);
+        RScoredSortedSet<String> couponQueue = redisRepository.getScoredSortedSet(COUPON_QUEUE_KEY);
         Collection<String> temp = couponQueue.pollFirst(POLL_SIZE);
 
         // 발급 이력 생성
-        RMap<String, Boolean> issuedUsers = RedisRepository.getMap(COUPON_ISSUED_KEY);
+        RMap<String, Boolean> issuedUsers = redisRepository.getMap(COUPON_ISSUED_KEY);
 
         for (String key : temp) {
             if (issuedUsers.containsKey(key)) {
@@ -149,7 +149,7 @@ public class CouponService {
                 continue;
             }
 
-            RAtomicLong atomicCoupon = RedisRepository.getAtomicLong(
+            RAtomicLong atomicCoupon = redisRepository.getAtomicLong(
                 COUPON_KEY + key.split(":")[1]);
 
             // 쿠폰 수량 확인하여 재고가 있을 때만 발급
