@@ -18,7 +18,7 @@ public class UserUseCaseTest extends IntegrationTest {
     class UserPointChargeConcurrency {
 
         @Test
-        void 유저_포인트_여러번_충전시_충전포인트에대한_정합성을_보장해야한다() throws InterruptedException {
+        void 동시에_동일_유저의_포인트_충전시_모두_성공한다() throws InterruptedException {
             // given
             Long point = 100L;
             int threadCount = 10;
@@ -58,7 +58,7 @@ public class UserUseCaseTest extends IntegrationTest {
     class UserPointChargeConcurrencyWithRedis {
 
         @Test
-        void 유저_포인트_여러번_충전시_충전포인트에대한_정합성을_보장해야한다() throws InterruptedException {
+        void 동시에_동일_유저의_포인트_충전시_모두_성공한다() throws InterruptedException {
             // given
             Long point = 100L;
             int threadCount = 10;

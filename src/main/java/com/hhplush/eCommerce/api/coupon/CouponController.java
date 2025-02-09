@@ -4,6 +4,7 @@ import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.IN
 
 import com.hhplush.eCommerce.api.coupon.dto.request.RequestIssueCouponDTO;
 import com.hhplush.eCommerce.api.coupon.dto.response.ResponseIssueCouponDTO;
+import com.hhplush.eCommerce.api.coupon.dto.response.ResponseIssueCouponDTOV2;
 import com.hhplush.eCommerce.business.coupon.CouponUseCase;
 import com.hhplush.eCommerce.common.exception.ErrorResponse;
 import com.hhplush.eCommerce.domain.coupon.UserCoupon;
@@ -78,4 +79,16 @@ public class CouponController {
                 .build());
     }
 
+
+    @PostMapping("/{couponId}/issued/V2")
+    public ResponseEntity<ResponseIssueCouponDTOV2> issueCouponV2(
+        @Schema(description = "쿠폰 ID", example = "1")
+        @PathVariable("couponId") @Min(value = 1, message = INVALID_ID) Long couponId,
+        @Valid @RequestBody RequestIssueCouponDTO requestIssueCouponDTO
+    ) {
+        couponUseCase.issueCouponRequest(couponId,
+            requestIssueCouponDTO.userId());
+        return
+            ResponseEntity.ok(ResponseIssueCouponDTOV2.builder().result("SUCCESS").build());
+    }
 }

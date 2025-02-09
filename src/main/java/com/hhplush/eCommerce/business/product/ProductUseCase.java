@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class ProductUseCase {
 
@@ -18,12 +17,19 @@ public class ProductUseCase {
     private final ProductService productService;
 
     // 상품 목록 조회
+    @Transactional
     public List<Product> getProducts() {
         return productService.getProductList();
     }
 
     // 상위 상품 목록 조회
+    @Transactional
     public List<ProductTop> getTopProducts() {
         return productService.getTopProductList(DateTimeUtils.localDateNow());
+    }
+
+    // 상위 상품 목록 조회(스프링 캐시 사용)
+    public List<ProductTop> getTopProductsV2() {
+        return productService.getTopProductListV2(DateTimeUtils.localDateNow());
     }
 }

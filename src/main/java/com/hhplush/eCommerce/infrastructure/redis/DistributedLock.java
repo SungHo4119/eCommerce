@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface IRedissonLock {
+public @interface DistributedLock {
 
     // 락을 구분할 key
     String key();

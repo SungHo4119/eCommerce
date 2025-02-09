@@ -22,6 +22,11 @@ public interface ICouponRepository {
     // 유저 쿠폰 발급
     void userCouponSave(UserCoupon userCoupon);
 
+
+    // 유저 쿠폰 발급 (리스트)
+    void userCouponSaveList(List<UserCoupon> userCouponsList);
+
+
     // 유저 쿠폰 조회
     Optional<UserCoupon> userCouponfindById(Long userCouponId);
 

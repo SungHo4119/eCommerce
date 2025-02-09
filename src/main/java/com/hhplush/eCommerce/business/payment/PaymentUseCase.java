@@ -10,7 +10,7 @@ import com.hhplush.eCommerce.domain.product.ProductQuantity;
 import com.hhplush.eCommerce.domain.product.ProductService;
 import com.hhplush.eCommerce.domain.user.User;
 import com.hhplush.eCommerce.domain.user.UserService;
-import com.hhplush.eCommerce.infrastructure.redis.IRedissonLock;
+import com.hhplush.eCommerce.infrastructure.redis.DistributedLock;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +67,7 @@ public class PaymentUseCase {
         }
     }
 
-    @IRedissonLock(key = "orderId")
+    @DistributedLock(key = "orderId")
     public Payment processPaymentWithRedis(Long orderId) {
         // 주문 정보 조회
         Order order = orderSerivce.getOrderByOrderId(orderId);

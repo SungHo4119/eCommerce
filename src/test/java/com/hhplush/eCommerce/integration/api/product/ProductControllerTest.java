@@ -133,4 +133,57 @@ class ProductControllerTest extends IntegrationTest {
                 .body("[1].product_rank", equalTo(productTop2.getProductRank().intValue()));
         }
     }
+
+
+    @Nested
+    @DisplayName("[GET] /api/products/top/v2 상위 상품 목록 조회(캐시 사용)")
+    class TopProductsV2 {
+
+        @DisplayName("상위 상품 목록을 성공적으로 조회한다.")
+        @Test
+        void topProducts_success() {
+            // given
+            ProductTop productTop1 = ProductTop.builder()
+                .productId(1L)
+                .productName("Top Product 1")
+                .price(1500L)
+                .productState(ProductState.IN_STOCK)
+                .productRank(1L)
+                .totalQuantity(100L)
+                .createAt(LocalDate.now())
+                .build();
+            ProductTop productTop2 = ProductTop.builder()
+                .productId(2L)
+                .productName("Top Product 2")
+                .price(2500L)
+                .productState(ProductState.IN_STOCK)
+                .productRank(2L)
+                .totalQuantity(200L)
+                .createAt(LocalDate.now())
+                .build();
+            productTopJPARepository.save(productTop1);
+            productTopJPARepository.save(productTop2);
+
+            // when & then
+            given()
+                .baseUri(baseUrl + RestAssured.port)
+                .when()
+                .get("/api/products/top/v2")
+                .then()
+                .statusCode(200)
+                .body("$", hasSize(2))
+                .body("[0].productTopId", equalTo(productTop1.getProductTopId().intValue()))
+                .body("[0].productId", equalTo(productTop1.getProductId().intValue()))
+                .body("[0].productName", equalTo(productTop1.getProductName()))
+                .body("[0].price", equalTo(productTop1.getPrice().intValue()))
+                .body("[0].productState", equalTo(productTop1.getProductState().name()))
+                .body("[0].product_rank", equalTo(productTop1.getProductRank().intValue()))
+                .body("[1].productTopId", equalTo(productTop2.getProductTopId().intValue()))
+                .body("[1].productId", equalTo(productTop2.getProductId().intValue()))
+                .body("[1].productName", equalTo(productTop2.getProductName()))
+                .body("[1].price", equalTo(productTop2.getPrice().intValue()))
+                .body("[1].productState", equalTo(productTop2.getProductState().name()))
+                .body("[1].product_rank", equalTo(productTop2.getProductRank().intValue()));
+        }
+    }
 }
