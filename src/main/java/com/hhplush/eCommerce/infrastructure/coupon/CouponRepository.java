@@ -40,7 +40,6 @@ public class CouponRepository implements ICouponRepository {
         return couponQuantityJPARepository.findCouponQuantityByCouponId(couponId);
     }
 
-
     // 쿠폰 수량 저장
     @Override
     public void couponQuantitySave(CouponQuantity couponQuantity) {
@@ -51,6 +50,11 @@ public class CouponRepository implements ICouponRepository {
     @Override
     public void userCouponSave(UserCoupon userCoupon) {
         userCouponJPARepository.save(userCoupon);
+    }
+
+    @Override
+    public void userCouponSaveList(List<UserCoupon> userCouponsList) {
+        userCouponJPARepository.saveAll(userCouponsList);
     }
 
     // 유저 쿠폰 조회

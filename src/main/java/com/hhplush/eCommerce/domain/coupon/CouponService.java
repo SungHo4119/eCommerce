@@ -4,22 +4,36 @@ import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.CO
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.COUPON_LIMIT_EXCEEDED;
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.COUPON_NOT_FOUND;
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.COUPON_USE_ALREADY_EXISTS;
+import static com.hhplush.eCommerce.common.utils.RedisUtil.COUPON_ISSUED_KEY;
+import static com.hhplush.eCommerce.common.utils.RedisUtil.COUPON_KEY;
+import static com.hhplush.eCommerce.common.utils.RedisUtil.COUPON_QUEUE_KEY;
+import static com.hhplush.eCommerce.common.utils.RedisUtil.POLL_SIZE;
+import static com.hhplush.eCommerce.common.utils.RedisUtil.getCouponKey;
+import static com.hhplush.eCommerce.common.utils.RedisUtil.getIssuedCouponKey;
 
 import com.hhplush.eCommerce.common.exception.custom.AlreadyExistsException;
 import com.hhplush.eCommerce.common.exception.custom.LimitExceededException;
 import com.hhplush.eCommerce.common.exception.custom.ResourceNotFoundException;
+import com.hhplush.eCommerce.domain.IRedisRepository;
 import com.hhplush.eCommerce.domain.user.User;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RAtomicLong;
+import org.redisson.api.RMap;
+import org.redisson.api.RScoredSortedSet;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CouponService {
 
     private final ICouponRepository couponRepository;
+    private final IRedisRepository RedisRepository;
 
     // 쿠폰 정보 조회
     public Coupon getCouponByCouponId(Long couponId) {
@@ -47,7 +61,6 @@ public class CouponService {
         return couponQuantity;
     }
 
-
     // 쿠폰 발급
     public UserCoupon issueUserCoupon(Coupon coupon, CouponQuantity couponQuantity, User user) {
         UserCoupon userCoupon = new UserCoupon(coupon, user.getUserId());
@@ -58,7 +71,6 @@ public class CouponService {
         couponRepository.couponQuantitySave(couponQuantity);
         return userCoupon;
     }
-
 
     // 이미 발급 받은 쿠폰인지 체크
     public void checkCouponValidity(Long userId, Long couponId) {
@@ -96,6 +108,68 @@ public class CouponService {
     // 사용자 쿠폰 목록 조회
     public List<UserCoupon> getUserCouponListByUserId(Long userId) {
         return couponRepository.findUserCouponByUserId(userId);
+    }
+
+    // 쿠폰 발급 요청
+    public boolean couponToQueue(String couponId, String userId) {
+        String couponKey = getCouponKey(couponId);
+        String issuedCouponKey = getIssuedCouponKey(couponId, userId);
+        String queueKey = COUPON_QUEUE_KEY;
+        // 유저 발급 확인
+        if (RedisRepository.isExists(issuedCouponKey)) {
+            return false;
+        }
+        // 쿠폰 수량 확인
+        RAtomicLong couponQuantity = RedisRepository.getAtomicLong(couponKey);
+        if (couponQuantity.get() <= 0) {
+            log.warn("쿠폰 수량 부족: key = {}", couponKey);
+            return false;
+        }
+
+        // 발급하기 위한 큐에 적재
+        RedisRepository.addScoredSortedSet(queueKey, issuedCouponKey);
+        return true;
+    }
+
+
+    // 쿠폰 발급
+    public void processCouponQueue() {
+        List<UserCoupon> userCouponsList = new java.util.ArrayList<>(List.of());
+
+        // 쿠폰 대기열 조회
+        RScoredSortedSet<String> couponQueue = RedisRepository.getScoredSortedSet(COUPON_QUEUE_KEY);
+        Collection<String> temp = couponQueue.pollFirst(POLL_SIZE);
+
+        // 발급 이력 생성
+        RMap<String, Boolean> issuedUsers = RedisRepository.getMap(COUPON_ISSUED_KEY);
+
+        for (String key : temp) {
+            if (issuedUsers.containsKey(key)) {
+                log.warn("이미 발급된 사용자 쿠폰: key = {}", key);
+                continue;
+            }
+
+            RAtomicLong atomicCoupon = RedisRepository.getAtomicLong(
+                COUPON_KEY + key.split(":")[1]);
+
+            // 쿠폰 수량 확인하여 재고가 있을 때만 발급
+            if (atomicCoupon.get() >= 1) {
+                UserCoupon userCoupon = UserCoupon.builder()
+                    .userId(Long.parseLong(key.split(":")[3]))
+                    .coupon(Coupon.builder().couponId(Long.parseLong(key.split(":")[1])).build())
+                    .couponUse(false)
+                    .createAt(LocalDateTime.now())
+                    .build();
+                userCouponsList.add(userCoupon);
+                atomicCoupon.decrementAndGet();
+                issuedUsers.put(key, true);
+            }
+
+        }
+        // 쿠폰 발급
+        if (!userCouponsList.isEmpty()) {
+            couponRepository.userCouponSaveList(userCouponsList);
+        }
     }
 
 }

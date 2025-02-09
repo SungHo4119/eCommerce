@@ -1,4 +1,4 @@
-package com.hhplush.eCommerce.infrastructure.redis;
+package com.hhplush.eCommerce.config;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -16,9 +16,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Slf4j
 @Configuration
@@ -26,9 +23,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfiguration {
 
     private static final String REDISSON_HOST_PREFIX = "redis://";
-    @Value("${spring.redis.host}")
+    @Value("${spring.data.redis.host}")
     private String redisHost;
-    @Value("${spring.redis.port}")
+    @Value("${spring.data.redis.port}")
     private int redisPort;
 
     @Bean
@@ -51,20 +48,6 @@ public class RedisConfiguration {
             .cacheDefaults(redisCacheConfiguration)
             .build();
         return cacheManager;
-    }
-
-
-    @Bean
-    // 레디스 캐시를 직접 조작
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-
-        template.setKeySerializer(new StringRedisSerializer());
-
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-
-        return template;
     }
 
     @Bean

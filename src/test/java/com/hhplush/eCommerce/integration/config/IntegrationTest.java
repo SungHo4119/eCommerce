@@ -26,6 +26,8 @@ import com.hhplush.eCommerce.infrastructure.product.IProductJPARepository;
 import com.hhplush.eCommerce.infrastructure.product.IProductQuantityJPARepository;
 import com.hhplush.eCommerce.infrastructure.product.IProductTopJPARepository;
 import com.hhplush.eCommerce.infrastructure.product.ProductRepository;
+import com.hhplush.eCommerce.infrastructure.redis.RedisRepository;
+import com.hhplush.eCommerce.infrastructure.redis.RedisService;
 import com.hhplush.eCommerce.infrastructure.user.IUserJPARepository;
 import com.hhplush.eCommerce.infrastructure.user.UserRepository;
 import io.restassured.RestAssured;
@@ -98,12 +100,17 @@ public class IntegrationTest {
     protected PaymentUseCase paymentUseCase;
     @Autowired
     protected PaymentService paymentService;
-
     @Autowired
     protected ObjectMapper objectMapper;
-
     @Autowired
     protected CustomLoggingFilter customLoggingFilter;
+
+    // 레디스
+    @Autowired
+    protected RedisService redisService;
+
+    @Autowired
+    protected RedisRepository redisRepository;
 
     protected String baseUrl = "http://localhost:";
     @LocalServerPort
@@ -122,6 +129,7 @@ public class IntegrationTest {
         productQuantityJPARepository.deleteAll();
         productJPARepository.deleteAll();
         userJPARepository.deleteAll();
+        redisService.deleteAllKeys();
     }
 
 }
