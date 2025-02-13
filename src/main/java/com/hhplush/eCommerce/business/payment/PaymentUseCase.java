@@ -1,5 +1,6 @@
 package com.hhplush.eCommerce.business.payment;
 
+import com.hhplush.eCommerce.business.payment.event.PaymentCompletedEvent;
 import com.hhplush.eCommerce.common.exception.custom.InvalidPaymentCancellationException;
 import com.hhplush.eCommerce.domain.order.Order;
 import com.hhplush.eCommerce.domain.order.OrderProduct;
@@ -14,6 +15,7 @@ import com.hhplush.eCommerce.infrastructure.redis.DistributedLock;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class PaymentUseCase {
     private final UserService userService;
     private final PaymentService paymentService;
     private final ProductService productService;
+    private final ApplicationEventPublisher eventPublisher; // 이벤트 발행기 추가
 
     public Payment processPayment(Long orderId) {
         // 주문 정보 조회
@@ -47,8 +50,16 @@ public class PaymentUseCase {
             orderSerivce.successOrder(order);
 
             // 결재 생성
-            return paymentService.createPayment(order);
+            Payment payment = paymentService.createPayment(order);
+            // 이벤트 발행
+            eventPublisher.publishEvent(new PaymentCompletedEvent(payment));
+            return payment;
+
         } catch (InvalidPaymentCancellationException e) {
+            /**
+             * 결재 취소 로직 => 이부분도 이벤트 기반으로 동작 하도록 변경 않을까?
+             * ToDo: 결재 취소 로직을 이벤트 기반으로 변경
+             */
             // 주문 취소
             orderSerivce.cancelOrder(order);
 

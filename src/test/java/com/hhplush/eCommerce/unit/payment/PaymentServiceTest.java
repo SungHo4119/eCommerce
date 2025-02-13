@@ -1,7 +1,6 @@
 package com.hhplush.eCommerce.unit.payment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
 
 import com.hhplush.eCommerce.domain.IDataCenter;
 import com.hhplush.eCommerce.domain.order.Order;
@@ -37,7 +36,7 @@ public class PaymentServiceTest {
     @DisplayName("PaymentService 의 createPayment 메서드 테스트")
     class CreatePaymentTests {
 
-        @DisplayName("결재 성공시 결재 정보를 저장하고 데이터 센터로 전송한다.")
+        @DisplayName("결재 성공시 결재 정보를 저장한다.")
         @Test
         void createPayment_success() {
             // given
@@ -48,7 +47,6 @@ public class PaymentServiceTest {
             Payment payment = paymentService.createPayment(order);
             // then
             assertEquals(payment.getOrderId(), order.getOrderId());
-            verify(dataCenter).sendDataCenter();
         }
 
     }
