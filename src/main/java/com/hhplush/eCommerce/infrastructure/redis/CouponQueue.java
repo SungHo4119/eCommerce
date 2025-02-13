@@ -1,6 +1,6 @@
 package com.hhplush.eCommerce.infrastructure.redis;
 
-import com.hhplush.eCommerce.domain.IRedisRepository;
+import com.hhplush.eCommerce.domain.ICouponQueue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RAtomicLong;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RedisRepository implements IRedisRepository {
+public class CouponQueue implements ICouponQueue {
 
     private final RedissonClient redissonClient;
 

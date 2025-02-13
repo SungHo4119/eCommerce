@@ -26,7 +26,7 @@ import com.hhplush.eCommerce.infrastructure.product.IProductJPARepository;
 import com.hhplush.eCommerce.infrastructure.product.IProductQuantityJPARepository;
 import com.hhplush.eCommerce.infrastructure.product.IProductTopJPARepository;
 import com.hhplush.eCommerce.infrastructure.product.ProductRepository;
-import com.hhplush.eCommerce.infrastructure.redis.RedisRepository;
+import com.hhplush.eCommerce.infrastructure.redis.CouponQueue;
 import com.hhplush.eCommerce.infrastructure.redis.RedisService;
 import com.hhplush.eCommerce.infrastructure.user.IUserJPARepository;
 import com.hhplush.eCommerce.infrastructure.user.UserRepository;
@@ -110,7 +110,7 @@ public class IntegrationTest {
     protected RedisService redisService;
 
     @Autowired
-    protected RedisRepository redisRepository;
+    protected CouponQueue redisRepository;
 
     protected String baseUrl = "http://localhost:";
     @LocalServerPort

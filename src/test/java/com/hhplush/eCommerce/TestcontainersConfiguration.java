@@ -1,7 +1,6 @@
 package com.hhplush.eCommerce;
 
 import groovy.util.logging.Slf4j;
-import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -42,17 +41,19 @@ class TestcontainersConfiguration {
             REDIS_CONTAINER.getMappedPort(6379).toString());
     }
 
-    @PreDestroy
-    public void preDestroy() {
-        if (MYSQL_CONTAINER.isRunning()) {
-            log.info("MySQL 컨테이너 종료");
-            MYSQL_CONTAINER.stop();
-        }
-
-        // Redis 컨테이너 종료
-        if (REDIS_CONTAINER.isRunning()) {
-            log.info("Redis 컨테이너 종료");
-            REDIS_CONTAINER.stop();
-        }
-    }
+//   Spring 켄텍스트가 종료되기전 PreDestroy 메소드 호출로 인해 컨테이너 종료로직 제거
+//   테스트 종료시 testcontainers로 생성된 컨테이너는 자동으로 종료됨 ( 코치님 피드백 - 확인 완료 )
+//    @PreDestroy
+//    public void preDestroy() {
+//        if (MYSQL_CONTAINER.isRunning()) {
+//            log.info("MySQL 컨테이너 종료");
+//            MYSQL_CONTAINER.stop();
+//        }
+//
+//        // Redis 컨테이너 종료
+//        if (REDIS_CONTAINER.isRunning()) {
+//            log.info("Redis 컨테이너 종료");
+//            REDIS_CONTAINER.stop();
+//        }
+//    }
 }
