@@ -91,3 +91,12 @@ Caused by: org.apache.kafka.common.errors.TimeoutException: Timeout of 60000ms e
 `docker exec -it kafka-1 kafka-topics.sh --delete --bootstrap-server localhost:9092 --topic userId`
 토픽을 삭제하고 실행시 1번오류 => 2번오류 순으로 발생되는 문제가 있음...
 
+### 오류 해결 방법
+
+- 클러스터 구성이 잘못된 것인지... 단일 클러스터로 실행 후 명령어로 사전에 토픽을 추가하고 실행하면 오류 1번 발생하지 않음
+
+```bash
+ docker exec -it kafka-1 kafka-topics.sh --describe --bootstrap-server localhost:9092 --topic userId
+```
+
+![결과](./img/kafka-error수정.png)
