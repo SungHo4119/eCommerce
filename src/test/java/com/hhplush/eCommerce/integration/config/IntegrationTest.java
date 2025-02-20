@@ -9,6 +9,8 @@ import com.hhplush.eCommerce.business.product.ProductUseCase;
 import com.hhplush.eCommerce.business.user.UserUseCase;
 import com.hhplush.eCommerce.common.filter.CustomLoggingFilter;
 import com.hhplush.eCommerce.domain.coupon.CouponService;
+import com.hhplush.eCommerce.domain.event.EventService;
+import com.hhplush.eCommerce.domain.event.IEventRepository;
 import com.hhplush.eCommerce.domain.order.OrderSerivce;
 import com.hhplush.eCommerce.domain.payment.PaymentService;
 import com.hhplush.eCommerce.domain.product.ProductService;
@@ -17,6 +19,10 @@ import com.hhplush.eCommerce.infrastructure.coupon.CouponRepository;
 import com.hhplush.eCommerce.infrastructure.coupon.ICouponJPARepository;
 import com.hhplush.eCommerce.infrastructure.coupon.ICouponQuantityJPARepository;
 import com.hhplush.eCommerce.infrastructure.coupon.IUserCouponJPARepository;
+import com.hhplush.eCommerce.infrastructure.kafka.EventRepository;
+import com.hhplush.eCommerce.infrastructure.kafka.IOutboxEventJPARepository;
+import com.hhplush.eCommerce.infrastructure.kafka.KafkaEventConsumer;
+import com.hhplush.eCommerce.infrastructure.kafka.KafkaEventPublisher;
 import com.hhplush.eCommerce.infrastructure.order.IOrderJPARepository;
 import com.hhplush.eCommerce.infrastructure.order.IOrderProductJPARepository;
 import com.hhplush.eCommerce.infrastructure.order.OrderRepository;
@@ -112,6 +118,24 @@ public class IntegrationTest {
     @Autowired
     protected CouponQueue redisRepository;
 
+    // 카프카
+    @Autowired
+    protected IOutboxEventJPARepository outboxEventJPARepository;
+    @Autowired
+    protected EventRepository eventRepository;
+
+    @Autowired
+    protected IEventRepository iEventRepository;
+
+    @Autowired
+    protected EventService eventService;
+
+    @Autowired
+    protected KafkaEventConsumer kafkaEventConsumer;
+
+    @Autowired
+    protected KafkaEventPublisher kafkaEventPublisher;
+
     protected String baseUrl = "http://localhost:";
     @LocalServerPort
     int port;
@@ -130,6 +154,7 @@ public class IntegrationTest {
         productJPARepository.deleteAll();
         userJPARepository.deleteAll();
         redisService.deleteAllKeys();
+        outboxEventJPARepository.deleteAll();
     }
 
 }
