@@ -4,10 +4,12 @@ import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.IN
 import static com.hhplush.eCommerce.common.exception.message.ExceptionMessage.USER_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.hhplush.eCommerce.common.exception.custom.InvalidPaymentCancellationException;
 import com.hhplush.eCommerce.common.exception.custom.ResourceNotFoundException;
+import com.hhplush.eCommerce.domain.IEventPublisher;
 import com.hhplush.eCommerce.domain.user.IUserRepository;
 import com.hhplush.eCommerce.domain.user.User;
 import com.hhplush.eCommerce.domain.user.UserService;
@@ -24,6 +26,9 @@ public class UserServiceTest {
 
     @Mock
     private IUserRepository userRepository;
+
+    @Mock
+    private IEventPublisher eventPublisher;
 
     @InjectMocks
     private UserService userService;
@@ -48,6 +53,8 @@ public class UserServiceTest {
                 .point(100L)
                 .build();
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+            doNothing().when(eventPublisher).publishString("1", "1");
+
             // When
             User result = userService.getUserByUserId(userId);
             // Then
@@ -61,6 +68,7 @@ public class UserServiceTest {
             // Given
             Long userId = 1L;
             when(userRepository.findById(userId)).thenReturn(Optional.empty());
+            doNothing().when(eventPublisher).publishString("1", "1");
 
             // When & Then
             ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
