@@ -50,6 +50,10 @@ dependencies {
     // DB
     runtimeOnly("com.mysql:mysql-connector-j")
 
+    // kafka
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.kafka:spring-kafka")
+
     // Test
     testImplementation("io.rest-assured:rest-assured:5.3.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

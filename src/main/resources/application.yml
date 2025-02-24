@@ -25,7 +25,29 @@ spring:
       hibernate.timezone.default_storage: NORMALIZE_UTC
       hibernate.jdbc.time_zone: UTC
 
-  data:
+  kafka:
+    bootstrap-servers: localhost:9092 #,localhost:9094,localhost:9096
+    producer:
+      retries: 3   # 메시지 전송 실패 시 재시도 횟수
+      batch-size: 16384
+      linger-ms: 1
+      buffer-memory: 33554432
+      acks: all  # 모든 팔로워가 메시지를 확인한 후 ACK 반환 (Exactly-once 보장)
+      properties:
+        enable.idempotence: true  # Exactly-once 전송 보장
+        compression.type: snappy  # 메시지 압축 (snappy, gzip, lz4 중 선택)
+        metadata.max.age.ms: 5000  # 메타데이터 캐싱 시간 (5초)
+      topic: # 토픽 목록
+        userId: userId
+    consumer:
+      group-id: eCommerce  # 컨슈머 그룹 ID
+      auto-offset-reset: earliest  # 초기 오프셋 설정 (earliest: 가장 오래된 메시지부터, latest: 가장 최근 메시지부터)
+      enable-auto-commit: false  # 오프셋 자동 커밋 비활성화
+      properties:
+        isolation.level: read_committed  # Exactly-once 소비 보장 (트랜잭션 메시지 사용 시)
+    admin:
+      auto-create: true  # NewTopic을 통해 토픽 자동 생성
+
     redis:
       repositories:
         enabled: false
