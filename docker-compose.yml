@@ -1,4 +1,5 @@
 services:
+  #---------------------------------------------------
   mysql:
     image: mysql:8.0
     ports:
@@ -10,28 +11,38 @@ services:
       - MYSQL_DATABASE=hhplus
     volumes:
       - ./data/mysql/:/var/lib/mysql
-
-  mysql_secondary:
-    image: mysql:8.0
-    container_name: mysql_secondary
-    ports:
-      - "33060:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: application
-      MYSQL_PASSWORD: application
-      MYSQL_DATABASE: hhplus
-    volumes:
-      - ./data/mysql2/:/var/lib/mysql
-
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: "8.0G"
+  #---------------------------------------------------
   redis:
     image: redis:7.4.2
     ports:
       - "6379:6379"
-    command: redis-server --appendonly yes
+    command: >
+      sh -c "redis-server --appendonly yes & sleep 3 &&
+      redis-cli SET coupon:1 15000 &&
+      redis-cli SET coupon:2 15000 &&
+      redis-cli SET coupon:3 15000 &&
+      redis-cli SET coupon:4 15000 &&
+      wait"
     volumes:
-      - ./data/redis:/data  # Redis 데이터
+      - ./data/redis:/data
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "1.0G"
 
+  #---------------------------------------------------
   kafka-1:
     image: bitnami/kafka:3.9.0
     container_name: kafka-1
@@ -44,49 +55,18 @@ services:
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@localhost:9093 # ,2@kafka-2:9093,3@kafka-3:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-1:9092
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9093
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
       - ALLOW_PLAINTEXT_LISTENER=yes
     volumes:
       - ./data/kafka-1:/bitnami/kafka
-  #
-  #  kafka-2:
-  #    image: bitnami/kafka:3.9.0
-  #    container_name: kafka-2
-  #    ports:
-  #      - "9094:9092"
-  #    environment:
-  #      - KAFKA_ENABLE_KRAFT=yes
-  #      - KAFKA_CFG_NODE_ID=2
-  #      - KAFKA_KRAFT_CLUSTER_ID=local
-  #      - KAFKA_CFG_PROCESS_ROLES=controller,broker
-  #      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
-  #      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-  #      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
-  #      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093
-  #      - ALLOW_PLAINTEXT_LISTENER=yes
-  #    volumes:
-  #      - ./data/kafka-2:/bitnami/kafka
-  #
-  #  kafka-3:
-  #    image: bitnami/kafka:3.9.0
-  #    container_name: kafka-3
-  #    ports:
-  #      - "9096:9092"
-  #    environment:
-  #      - KAFKA_ENABLE_KRAFT=yes
-  #      - KAFKA_CFG_NODE_ID=3
-  #      - KAFKA_KRAFT_CLUSTER_ID=local
-  #      - KAFKA_CFG_PROCESS_ROLES=controller,broker
-  #      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
-  #      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-  #      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
-  #      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093
-  #      - ALLOW_PLAINTEXT_LISTENER=yes
-  #    volumes:
-  #      - ./data/kafka-3:/bitnami/kafka
-
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "1.0G"
+  #---------------------------------------------------
   kafka-ui:
     image: provectuslabs/kafka-ui:v0.7.2
     ports:
@@ -97,9 +77,72 @@ services:
       - KAFKA_CLUSTERS_0_KRAFTENABLED=true
     depends_on:
       - kafka-1
-#      - kafka-2
-#      - kafka-3
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "1.0G"
+  #---------------------------------------------------
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana-provisioning:/etc/grafana/provisioning
+      - ./grafana-dashboard:/dashboard
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "1.0G"
 
+  #---------------------------------------------------
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    command:
+      - --web.enable-remote-write-receiver
+      - --enable-feature=native-histograms
+      - --config.file=/etc/prometheus/prometheus.yml
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "1.0G"
+  #---------------------------------------------------
+  k6:
+    image: grafana/k6
+    volumes:
+      - ./k6-scripts:/scripts
+    command: run -o experimental-prometheus-rw /scripts/stress.js
+    environment:
+      - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write
+      - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      spring-app:
+        condition: service_healthy
+  #---------------------------------------------------
+  spring-app:
+    build: .
+    container_name: spring-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/products/top" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    command: [ "sh", "-c", "sleep 20; java -jar app.jar" ]
 networks:
   default:
     driver: bridge

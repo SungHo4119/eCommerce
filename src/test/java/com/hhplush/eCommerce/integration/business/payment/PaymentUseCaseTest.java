@@ -3,6 +3,7 @@ package com.hhplush.eCommerce.integration.business.payment;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import com.hhplush.eCommerce.domain.event.EventType;
 import com.hhplush.eCommerce.domain.event.OutboxEvent;
 import com.hhplush.eCommerce.domain.event.ProcessState;
 import com.hhplush.eCommerce.domain.order.Order;
@@ -174,7 +175,7 @@ public class PaymentUseCaseTest extends IntegrationTest {
             // given
             OutboxEvent outboxEvent = OutboxEvent.builder()
                 .aggregateId("999")
-                .eventType("payment-events")
+                .eventType(EventType.payment_events.toString())
                 .eventPayload("999")
                 .processState(ProcessState.PUBLISHED_FAILED)
                 .build();

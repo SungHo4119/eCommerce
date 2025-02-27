@@ -1,5 +1,6 @@
 package com.hhplush.eCommerce.infrastructure.kafka;
 
+import com.hhplush.eCommerce.domain.event.EventType;
 import com.hhplush.eCommerce.domain.event.ProcessState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,10 +35,11 @@ public class KafkaEventConsumer {
         log.info("유저 조회 성공시 발행 된 메시지를 전달 받습니다. message : {}", value);
     }
 
-    @KafkaListener(id = "paymentListener", topics = "payment-events", groupId = "eCommerce", containerFactory = "kafkaListenerContainerFactory", autoStartup = "false")
+    @KafkaListener(id = "paymentListener", topics = "payment_events", groupId = "eCommerce", containerFactory = "kafkaListenerContainerFactory", autoStartup = "false")
     public void consumePaymentRecord(ConsumerRecord<String, String> record) {
         String value = record.value();
-        log.info("결제 완료시 발행 된 메시지를 전달 받습니다.  payment-events : {}", value);
+        log.info("결제 완료시 발행 된 메시지를 전달 받습니다. +" + EventType.payment_events + ": {}",
+            value);
         outboxEventJPARepository.findById(Long.valueOf(value)).ifPresent(outboxEvent -> {
             outboxEvent.setProcessState(ProcessState.PROCESSED);
             outboxEventJPARepository.save(outboxEvent);

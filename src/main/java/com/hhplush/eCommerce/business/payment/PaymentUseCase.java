@@ -3,6 +3,7 @@ package com.hhplush.eCommerce.business.payment;
 import com.hhplush.eCommerce.business.payment.event.PaymentCompletedEvent;
 import com.hhplush.eCommerce.common.exception.custom.InvalidPaymentCancellationException;
 import com.hhplush.eCommerce.domain.event.EventService;
+import com.hhplush.eCommerce.domain.event.EventType;
 import com.hhplush.eCommerce.domain.event.OutboxEvent;
 import com.hhplush.eCommerce.domain.event.ProcessState;
 import com.hhplush.eCommerce.domain.order.Order;
@@ -145,7 +146,7 @@ public class PaymentUseCase {
             // 이벤트 발행
             eventService.saveEvent(OutboxEvent.builder()
                 .aggregateId(payment.getPaymentId().toString())
-                .eventType("payment-events")
+                .eventType(EventType.payment_events.toString())
                 .eventPayload(payment.toString())
                 .processState(ProcessState.PENDING)
                 .build());

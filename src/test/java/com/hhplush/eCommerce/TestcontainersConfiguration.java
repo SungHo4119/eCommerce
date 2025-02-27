@@ -62,7 +62,7 @@ class TestcontainersConfiguration {
             .withEnv("KAFKA_CFG_CONTROLLER_QUORUM_VOTERS", "1@localhost:9093")
             .withEnv("KAFKA_CFG_CONTROLLER_LISTENER_NAMES", "CONTROLLER")
             .withEnv("KAFKA_CREATE_TOPICS", "userId:1:1")
-            .withEnv("KAFKA_CREATE_TOPICS", "payment-events:1:1")
+            .withEnv("KAFKA_CREATE_TOPICS", "payment_events:1:1")
             .withEnv("ALLOW_PLAINTEXT_LISTENER", "yes")
             .waitingFor(Wait.forLogMessage(".*Kafka Server started.*\\n", 1));
 
