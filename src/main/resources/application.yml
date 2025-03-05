@@ -1,8 +1,6 @@
 spring:
   application:
     name: eCommerce
-  profiles:
-    active: local
   datasource:
     name: HangHaePlusDataSource
     type: com.zaxxer.hikari.HikariDataSource
@@ -26,7 +24,7 @@ spring:
       hibernate.jdbc.time_zone: UTC
 
   kafka:
-    bootstrap-servers: localhost:9092 #,localhost:9094,localhost:9096
+    bootstrap-servers: localhost:9092
     producer:
       retries: 3   # 메시지 전송 실패 시 재시도 횟수
       batch-size: 16384
@@ -47,11 +45,10 @@ spring:
         isolation.level: read_committed  # Exactly-once 소비 보장 (트랜잭션 메시지 사용 시)
     admin:
       auto-create: true  # NewTopic을 통해 토픽 자동 생성
-
+  data:
     redis:
       repositories:
         enabled: false
-      host: localhost
       port: 6379
   cache:
     type: redis
@@ -63,7 +60,10 @@ logging:
   level:
     root: INFO  # 전체 로그 레벨
     org.springframework.web: INFO
-    org.hibernate: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.hibernate.tool.schema: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"  # 로그 출력 포맷 (선택 사항)
 decorator:
@@ -95,3 +95,36 @@ spring:
   task:
     scheduling:
       enabled: true
+  kafka:
+    bootstrap-servers: localhost:9092
+---
+spring.config.activate.on-profile: docker
+
+spring:
+  datasource:
+    url: jdbc:mysql://mysql:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
+    username: application
+    password: application
+    hikari:
+      connection-timeout: 60000
+  data:
+    redis:
+      repositories:
+        enabled: false
+      host: redis
+      port: 6379
+  cache:
+    type: redis
+  task:
+    scheduling:
+      enabled: true
+  kafka:
+    bootstrap-servers: kafka-1:9092
+  jpa:
+    database: mysql
+    open-in-view: false
+    generate-ddl: false
+    show-sql: true
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
